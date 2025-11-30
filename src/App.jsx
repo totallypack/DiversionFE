@@ -1,14 +1,18 @@
   import { Routes, Route } from "react-router-dom";
   import "./App.css";
+  import Home from "./components/Home";
+  import Login from "./components/Login";
   import Register from "./components/Register";
+  import ProfileSetup from "./components/ProfileSetup";
 
   function App() {
     return (
       <div className="App">
-        <h1>Welcome to Diversion!</h1>
         <Routes>
-          <Route path="/" element={<h2>Diversion - Special Interest Communities</h2>} />
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/profile" element={<ProfileSetup />} />
         </Routes>
       </div>
     );
