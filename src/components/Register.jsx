@@ -1,5 +1,5 @@
   import { useState } from "react";
-  import { useNavigate } from "react-router-dom";
+  import { useNavigate, Link } from "react-router-dom";
   import { register } from "../managers/authManager";
   import {
     Form,
@@ -196,9 +196,17 @@
                     type="submit"
                     block
                     disabled={loading}
+                    className="mb-3"
                   >
                     {loading ? "Creating Account..." : "Sign Up"}
                   </Button>
+
+                  <div className="text-center">
+                    <p className="mb-0">
+                      Already have an account?{" "}
+                      <Link to="/login">Log in here</Link>
+                    </p>
+                  </div>
                 </Form>
               </CardBody>
             </Card>
