@@ -1,33 +1,46 @@
-  const apiUrl = "/api/auth";
+const apiUrl = "/api/auth";
 
-  export const register = async (userData) => {
-    const res = await fetch(`${apiUrl}/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userData),
+export const register = async (userData) => {
+  const res = await fetch(`${apiUrl}/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include", // Required for cookie authentication
+    body: JSON.stringify(userData),
+  });
+  if (!res.ok) {
+    return res.json().then((error) => {
+      throw error;
     });
-    if (!res.ok) {
-      return res.json().then((error) => {
-        throw error;
-      });
-    }
-    return await res.json();
-  };
+  }
+  return await res.json();
+};
 
-  export const login = async (credentials) => {
-    const res = await fetch(`${apiUrl}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(credentials),
+export const login = async (credentials) => {
+  const res = await fetch(`${apiUrl}/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include", // Required for cookie authentication
+    body: JSON.stringify(credentials),
+  });
+  if (!res.ok) {
+    return res.json().then((error) => {
+      throw error;
     });
-    if (!res.ok) {
-      return res.json().then((error) => {
-        throw error;
-      });
-    }
-    return await res.json();
-  };
+  }
+  return await res.json();
+};
+
+export const logout = async () => {
+  const res = await fetch(`${apiUrl}/logout`, {
+    method: "POST",
+    credentials: "include", // Required for cookie authentication
+  });
+  if (!res.ok) {
+    throw new Error("Logout failed");
+  }
+  return await res.json();
+};

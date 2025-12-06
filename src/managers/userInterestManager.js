@@ -1,41 +1,12 @@
-const apiUrl = "/api/userprofile";
+const apiUrl = "/api/userinterests";
 
-export const getMyProfile = async () => {
-  const res = await fetch(`${apiUrl}/me`, {
+export const getMyInterests = async () => {
+  const res = await fetch(apiUrl, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
     credentials: "include", // Required for cookie authentication
-  });
-
-  if (!res.ok) {
-    if (res.status === 404) {
-      return null;
-    }
-    if (res.status === 401 || res.status === 500) {
-      throw new Error("Unauthorized");
-    }
-    // Only try to parse JSON if there's content
-    const contentType = res.headers.get("content-type");
-    if (contentType && contentType.includes("application/json")) {
-      return res.json().then((error) => {
-        throw error;
-      });
-    }
-    throw new Error("Failed to load profile");
-  }
-  return await res.json();
-};
-
-export const createProfile = async (profileData) => {
-  const res = await fetch(apiUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include", // Required for cookie authentication
-    body: JSON.stringify(profileData),
   });
 
   if (!res.ok) {
@@ -46,14 +17,28 @@ export const createProfile = async (profileData) => {
   return await res.json();
 };
 
-export const updateProfile = async (profileData) => {
+export const addInterest = async (subInterestId) => {
   const res = await fetch(apiUrl, {
-    method: "PUT",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     credentials: "include", // Required for cookie authentication
-    body: JSON.stringify(profileData),
+    body: JSON.stringify({ subInterestId }),
+  });
+
+  if (!res.ok) {
+    return res.json().then((error) => {
+      throw error;
+    });
+  }
+  return await res.json();
+};
+
+export const removeInterest = async (userInterestId) => {
+  const res = await fetch(`${apiUrl}/${userInterestId}`, {
+    method: "DELETE",
+    credentials: "include", // Required for cookie authentication
   });
 
   if (!res.ok) {
@@ -64,8 +49,8 @@ export const updateProfile = async (profileData) => {
   return res.status === 204 ? null : await res.json();
 };
 
-export const deleteProfile = async () => {
-  const res = await fetch(apiUrl, {
+export const removeInterestBySubInterestId = async (subInterestId) => {
+  const res = await fetch(`${apiUrl}/subinterest/${subInterestId}`, {
     method: "DELETE",
     credentials: "include", // Required for cookie authentication
   });

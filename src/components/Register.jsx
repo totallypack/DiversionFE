@@ -101,11 +101,11 @@
       try {
         const response = await register({ email, username, password });
 
-        localStorage.setItem("token", response.token);
+        // Store username and email for display purposes only (auth is handled by cookies)
         localStorage.setItem("username", response.username);
         localStorage.setItem("email", response.email);
 
-        navigate("/");
+        navigate("/profile");
       } catch (error) {
         setLoading(false);
         if (error.errors) {

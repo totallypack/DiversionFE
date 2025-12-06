@@ -36,6 +36,13 @@ export default function ProfileSetup() {
   }, []);
 
   const loadProfile = async () => {
+    // Check if user is logged in (check username since auth is cookie-based)
+    const username = localStorage.getItem("username");
+    if (!username) {
+      navigate("/login");
+      return;
+    }
+
     try {
       const profile = await getMyProfile();
       if (profile) {
@@ -47,7 +54,12 @@ export default function ProfileSetup() {
         setProfilePicUrl(profile.profilePicUrl || "");
       }
     } catch (error) {
-      console.error("Error loading profile:", error);
+      if (error.message === "Unauthorized" || error.message === "Failed to load profile") {
+        localStorage.clear();
+        navigate("/login");
+      } else {
+        console.error("Error loading profile:", error);
+      }
     }
   };
 
@@ -99,9 +111,9 @@ export default function ProfileSetup() {
       setSuccess(true);
       setLoading(false);
 
-      // Redirect to home after 2 seconds
+      // Redirect to interest selection after 2 seconds
       setTimeout(() => {
-        navigate("/");
+        navigate("/select-interests");
       }, 2000);
     } catch (error) {
       setLoading(false);
@@ -127,7 +139,7 @@ export default function ProfileSetup() {
 
               {success && (
                 <Alert color="success">
-                  Profile saved successfully! Redirecting...
+                  Profile saved successfully! Redirecting to interest selection...
                 </Alert>
               )}
 

@@ -1,9 +1,16 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Container, Row, Col, Button, Card, CardBody } from "reactstrap";
 
 export default function Home() {
-  const isLoggedIn = !!localStorage.getItem("token");
-  const username = localStorage.getItem("username");
+  const navigate = useNavigate();
+  const isLoggedIn = !!localStorage.getItem("username"); // Check username instead of token
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/dashboard");
+    }
+  }, [isLoggedIn, navigate]);
 
   return (
     <Container className="mt-5">
@@ -16,32 +23,7 @@ export default function Home() {
             </p>
           </div>
 
-          {isLoggedIn ? (
-            <Card>
-              <CardBody>
-                <h3 className="mb-4">Welcome back, {username}!</h3>
-                <div className="d-grid gap-2">
-                  <Button
-                    color="primary"
-                    size="lg"
-                    tag={Link}
-                    to="/profile"
-                  >
-                    Manage Profile
-                  </Button>
-                  <Button
-                    color="outline-secondary"
-                    onClick={() => {
-                      localStorage.clear();
-                      window.location.reload();
-                    }}
-                  >
-                    Log Out
-                  </Button>
-                </div>
-              </CardBody>
-            </Card>
-          ) : (
+          {!isLoggedIn && (
             <Row className="g-3">
               <Col md={6}>
                 <Card className="h-100">
