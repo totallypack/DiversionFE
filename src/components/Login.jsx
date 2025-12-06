@@ -37,11 +37,10 @@ export default function Login() {
     try {
       const response = await login({ username, password });
 
-      localStorage.setItem("token", response.token);
+      // Store username for display purposes only (auth is handled by cookies)
       localStorage.setItem("username", response.username);
 
-      navigate("/");
-      window.location.reload(); // Refresh to update auth state
+      navigate("/dashboard");
     } catch (error) {
       setLoading(false);
       if (error.message) {
@@ -80,6 +79,7 @@ export default function Login() {
                     onChange={(e) => setUsername(e.target.value)}
                     disabled={loading}
                     placeholder="Enter your username"
+                    autoComplete="on"
                   />
                 </FormGroup>
 
