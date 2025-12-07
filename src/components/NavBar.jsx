@@ -28,6 +28,11 @@ export default function NavBar() {
           </NavLink>
         </NavItem>
         <NavItem>
+          <NavLink tag={Link} to="/events/create">
+            Create Event
+          </NavLink>
+        </NavItem>
+        <NavItem>
           <NavLink tag={Link} to="/my-profile">
             My Profile
           </NavLink>
