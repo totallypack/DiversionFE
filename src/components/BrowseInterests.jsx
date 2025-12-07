@@ -96,7 +96,6 @@ export default function BrowseInterests() {
               </p>
             </div>
 
-            {/* Search and Filter Controls */}
             <Card className="mb-4">
               <CardBody>
                 <Row>

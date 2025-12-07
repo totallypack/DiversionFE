@@ -16,7 +16,6 @@ export default function Dashboard() {
   const loadEvents = async () => {
     try {
       const eventsData = await getAllEvents();
-      // Sort by start date (upcoming first)
       const sortedEvents = eventsData.sort(
         (a, b) => new Date(a.startDateTime) - new Date(b.startDateTime)
       );

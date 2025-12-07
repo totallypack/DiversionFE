@@ -25,7 +25,6 @@ export default function ProfileView() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Check if this is part of onboarding (no navbar should show)
   const isOnboarding = location.state?.onboarding === true;
 
   useEffect(() => {
@@ -50,7 +49,6 @@ export default function ProfileView() {
   };
 
   const handleContinue = () => {
-    // Mark onboarding as complete
     localStorage.setItem("onboardingComplete", "true");
     navigate("/dashboard");
   };
@@ -130,9 +128,12 @@ export default function ProfileView() {
                     </Col>
                     <Col md={9}>
                       <h4>{profile.displayName}</h4>
-                      {profile.location && (
+                      {(profile.city || profile.state) && (
                         <p className="text-muted">
-                          <strong>Location:</strong> {profile.location}
+                          <strong>Location:</strong>{" "}
+                          {profile.city && profile.state
+                            ? `${profile.city}, ${profile.state}`
+                            : profile.city || profile.state}
                         </p>
                       )}
                       {profile.dob && (
