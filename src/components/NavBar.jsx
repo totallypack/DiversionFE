@@ -12,7 +12,7 @@ export default function NavBar() {
   };
 
   return (
-    <Navbar color="dark" dark expand="md" className="mb-4">
+    <Navbar color="dark" dark expand="md" className="mb-4" sticky="top">
       <NavbarBrand tag={Link} to="/dashboard">
         Diversion
       </NavbarBrand>
@@ -20,6 +20,11 @@ export default function NavBar() {
         <NavItem>
           <NavLink tag={Link} to="/dashboard">
             Home
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink tag={Link} to="/browse-interests">
+            Browse Interests
           </NavLink>
         </NavItem>
         <NavItem>

@@ -7,6 +7,8 @@
   import Dashboard from "./components/Dashboard";
   import InterestSelection from "./components/InterestSelection";
   import SubInterestSelection from "./components/SubInterestSelection";
+  import SubInterestDetail from "./components/SubInterestDetail";
+  import BrowseInterests from "./components/BrowseInterests";
   import ProfileView from "./components/ProfileView";
 
   function App() {
@@ -20,6 +22,8 @@
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/select-interests" element={<InterestSelection />} />
           <Route path="/select-subinterests/:interestId" element={<SubInterestSelection />} />
+          <Route path="/browse-interests" element={<BrowseInterests />} />
+          <Route path="/subinterest/:id" element={<SubInterestDetail />} />
           <Route path="/my-profile" element={<ProfileView />} />
           <Route path="/my-profile-view" element={<ProfileView />} />
         </Routes>

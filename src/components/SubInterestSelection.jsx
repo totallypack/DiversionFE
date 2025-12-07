@@ -46,7 +46,7 @@ export default function SubInterestSelection() {
     );
   };
 
-  const handleAddToProfile = async () => {
+  const handleAddInterests = async () => {
     if (selectedSubInterests.length === 0) {
       setError("Please select at least one interest");
       return;
@@ -61,8 +61,8 @@ export default function SubInterestSelection() {
         await addInterest(subInterestId);
       }
 
-      // Redirect to profile view with onboarding flag
-      navigate("/my-profile-view", { state: { onboarding: true } });
+      // Navigate back to categories to select more
+      navigate("/select-interests", { state: { showSuccessMessage: true, addedCount: selectedSubInterests.length } });
     } catch (err) {
       setSaving(false);
       if (err.message) {
@@ -123,10 +123,10 @@ export default function SubInterestSelection() {
               </span>
               <Button
                 color="primary"
-                onClick={handleAddToProfile}
+                onClick={handleAddInterests}
                 disabled={saving}
               >
-                {saving ? "Adding..." : "Add to Profile"}
+                {saving ? "Adding..." : "Add & Continue"}
               </Button>
             </Alert>
           )}
@@ -174,10 +174,10 @@ export default function SubInterestSelection() {
               <Button
                 color="primary"
                 size="lg"
-                onClick={handleAddToProfile}
+                onClick={handleAddInterests}
                 disabled={saving}
               >
-                {saving ? "Adding to Profile..." : "Add to Profile"}
+                {saving ? "Adding..." : "Add & Continue"}
               </Button>
             </div>
           )}

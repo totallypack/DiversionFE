@@ -48,8 +48,8 @@ export const getInterestById = async (id) => {
   return await res.json();
 };
 
-export const getSubInterestsByInterest = async (interestId) => {
-  const res = await fetch(`${apiUrl}/subinterests/interest/${interestId}`, {
+export const getSubInterestById = async (id) => {
+  const res = await fetch(`${apiUrl}/subinterests/${id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

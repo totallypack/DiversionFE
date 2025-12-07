@@ -176,6 +176,8 @@ export default function ProfileView() {
                         color="primary"
                         pill
                         className="p-2"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => navigate(`/subinterest/${userInterest.subInterest.id}`)}
                       >
                         {userInterest.subInterest.name}
                         <small className="ms-1 text-white-50">

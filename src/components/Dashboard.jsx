@@ -1,4 +1,5 @@
-import { Container, Row, Col, Card, CardBody, CardTitle } from "reactstrap";
+import { Container, Row, Col, Card, CardBody, CardTitle, Button } from "reactstrap";
+import { Link } from "react-router-dom";
 import NavBar from "./NavBar";
 
 export default function Dashboard() {
@@ -6,9 +7,14 @@ export default function Dashboard() {
     <>
       <NavBar />
       <Container>
-        <Row>
-          <Col>
-            <h2 className="mb-4">Welcome to Your Dashboard</h2>
+        <Row className="mb-4">
+          <Col md={8}>
+            <h2 className="mb-0">Welcome to Your Dashboard</h2>
+          </Col>
+          <Col md={4} className="text-end">
+            <Button color="primary" tag={Link} to="/browse-interests">
+              Browse Interests
+            </Button>
           </Col>
         </Row>
 

@@ -111,9 +111,13 @@ export default function ProfileSetup() {
       setSuccess(true);
       setLoading(false);
 
-      // Redirect to interest selection after 2 seconds
+      // Redirect based on whether this is edit or create
       setTimeout(() => {
-        navigate("/select-interests");
+        if (isEdit) {
+          navigate("/my-profile");
+        } else {
+          navigate("/select-interests");
+        }
       }, 2000);
     } catch (error) {
       setLoading(false);
@@ -138,13 +142,15 @@ export default function ProfileSetup() {
               </h2>
 
               {success && (
-                <Alert color="success">
-                  Profile saved successfully! Redirecting to interest selection...
+                <Alert color="success" fade={false}>
+                  {isEdit
+                    ? "Profile updated successfully! Redirecting to your profile..."
+                    : "Profile created successfully! Redirecting to interest selection..."}
                 </Alert>
               )}
 
               {errors.length > 0 && (
-                <Alert color="danger">
+                <Alert color="danger" fade={false}>
                   <ul className="mb-0">
                     {errors.map((error, index) => (
                       <li key={index}>{error}</li>
