@@ -149,10 +149,20 @@ export default function EventDetail() {
                     </div>
                   )}
 
-                  {event.eventType === "InPerson" && event.location && (
+                  {event.eventType === "InPerson" && (event.streetAddress || event.city || event.state) && (
                     <div className="mb-2">
                       <strong>Location:</strong>{" "}
-                      <span className="text-muted">{event.location}</span>
+                      <span className="text-muted">
+                        {event.streetAddress && (
+                          <>
+                            {event.streetAddress}
+                            <br />
+                          </>
+                        )}
+                        {event.city && event.state
+                          ? `${event.city}, ${event.state}`
+                          : event.city || event.state}
+                      </span>
                     </div>
                   )}
                 </div>

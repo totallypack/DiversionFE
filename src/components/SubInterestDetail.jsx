@@ -123,18 +123,15 @@ export default function SubInterestDetail() {
       <Container className="mt-5">
       <Row className="justify-content-center">
         <Col md={10} lg={8}>
-          {/* Breadcrumb Navigation */}
           <div className="mb-4">
             <span className="text-muted">{subInterest.interest.name}</span>
             {" > "}
             <span className="fw-bold">{subInterest.name}</span>
           </div>
 
-          {/* Success/Error Messages */}
           {successMessage && <Alert color="success" fade={false}>{successMessage}</Alert>}
           {error && <Alert color="danger" fade={false}>{error}</Alert>}
 
-          {/* SubInterest Header */}
           <Card className="mb-4">
             <CardBody>
               <div className="d-flex justify-content-between align-items-start mb-3">
@@ -179,7 +176,6 @@ export default function SubInterestDetail() {
             </CardBody>
           </Card>
 
-          {/* Groups/Communities Section - Placeholder */}
           <Card>
             <CardBody>
               <h5 className="mb-3">Groups & Communities</h5>

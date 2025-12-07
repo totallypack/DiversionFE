@@ -17,13 +17,28 @@ import {
   Alert,
 } from "reactstrap";
 
+const US_STATES = [
+  "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
+  "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho",
+  "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana",
+  "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota",
+  "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
+  "New Hampshire", "New Jersey", "New Mexico", "New York",
+  "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon",
+  "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+  "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
+  "West Virginia", "Wisconsin", "Wyoming"
+];
+
 export default function CreateEvent() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [startDateTime, setStartDateTime] = useState("");
   const [endDateTime, setEndDateTime] = useState("");
   const [eventType, setEventType] = useState("Online");
-  const [location, setLocation] = useState("");
+  const [streetAddress, setStreetAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
   const [meetingUrl, setMeetingUrl] = useState("");
   const [interestTagId, setInterestTagId] = useState("");
   const [requiresRsvp, setRequiresRsvp] = useState(false);
@@ -89,8 +104,12 @@ export default function CreateEvent() {
       newErrors.push("Meeting URL is required for online events");
     }
 
-    if (eventType === "InPerson" && !location.trim()) {
-      newErrors.push("Location is required for in-person events");
+    if (eventType === "InPerson" && !city.trim()) {
+      newErrors.push("City is required for in-person events");
+    }
+
+    if (eventType === "InPerson" && !state) {
+      newErrors.push("State is required for in-person events");
     }
 
     return newErrors;
@@ -115,7 +134,9 @@ export default function CreateEvent() {
         startDateTime: new Date(startDateTime).toISOString(),
         endDateTime: new Date(endDateTime).toISOString(),
         eventType,
-        location: eventType === "InPerson" ? location.trim() : null,
+        streetAddress: eventType === "InPerson" ? streetAddress.trim() || null : null,
+        city: eventType === "InPerson" ? city.trim() : null,
+        state: eventType === "InPerson" ? state : null,
         meetingUrl: eventType === "Online" ? meetingUrl.trim() : null,
         interestTagId,
         requiresRsvp,
@@ -275,23 +296,57 @@ export default function CreateEvent() {
                     )}
 
                     {eventType === "InPerson" && (
-                      <FormGroup>
-                        <Label for="location">
-                          Location <span className="text-danger">*</span>
-                        </Label>
-                        <Input
-                          id="location"
-                          type="text"
-                          value={location}
-                          onChange={(e) => setLocation(e.target.value)}
-                          disabled={loading}
-                          placeholder="123 Main St, City, State"
-                          maxLength={500}
-                        />
-                        <div className="small text-muted mt-1">
-                          Enter the physical address or venue
-                        </div>
-                      </FormGroup>
+                      <>
+                        <FormGroup>
+                          <Label for="streetAddress">Street Address</Label>
+                          <Input
+                            id="streetAddress"
+                            type="text"
+                            value={streetAddress}
+                            onChange={(e) => setStreetAddress(e.target.value)}
+                            disabled={loading}
+                            placeholder="123 Main Street"
+                            maxLength={500}
+                          />
+                          <div className="small text-muted mt-1">
+                            Enter the street address or venue name
+                          </div>
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Label for="city">
+                            City <span className="text-danger">*</span>
+                          </Label>
+                          <Input
+                            id="city"
+                            type="text"
+                            value={city}
+                            onChange={(e) => setCity(e.target.value)}
+                            disabled={loading}
+                            placeholder="Enter city"
+                          />
+                        </FormGroup>
+
+                        <FormGroup>
+                          <Label for="state">
+                            State <span className="text-danger">*</span>
+                          </Label>
+                          <Input
+                            id="state"
+                            type="select"
+                            value={state}
+                            onChange={(e) => setState(e.target.value)}
+                            disabled={loading}
+                          >
+                            <option value="">Select a state...</option>
+                            {US_STATES.map((stateName) => (
+                              <option key={stateName} value={stateName}>
+                                {stateName}
+                              </option>
+                            ))}
+                          </Input>
+                        </FormGroup>
+                      </>
                     )}
 
                     <FormGroup check>

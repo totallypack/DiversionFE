@@ -15,10 +15,24 @@ import {
   CardBody,
 } from "reactstrap";
 
+const US_STATES = [
+  "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
+  "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho",
+  "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana",
+  "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota",
+  "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
+  "New Hampshire", "New Jersey", "New Mexico", "New York",
+  "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon",
+  "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+  "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
+  "West Virginia", "Wisconsin", "Wyoming"
+];
+
 export default function ProfileSetup() {
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
-  const [location, setLocation] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
   const [dob, setDob] = useState("");
   const [profilePicUrl, setProfilePicUrl] = useState("");
   const [errors, setErrors] = useState([]);
@@ -49,7 +63,8 @@ export default function ProfileSetup() {
         setIsEdit(true);
         setDisplayName(profile.displayName || "");
         setBio(profile.bio || "");
-        setLocation(profile.location || "");
+        setCity(profile.city || "");
+        setState(profile.state || "");
         setDob(profile.dob ? profile.dob.split("T")[0] : "");
         setProfilePicUrl(profile.profilePicUrl || "");
       }
@@ -97,7 +112,8 @@ export default function ProfileSetup() {
       const profileData = {
         displayName: displayName.trim(),
         bio: bio.trim() || null,
-        location: location.trim() || null,
+        city: city.trim() || null,
+        state: state || null,
         dob: dob || null,
         profilePicUrl: profilePicUrl.trim() || null,
       };
@@ -198,15 +214,33 @@ export default function ProfileSetup() {
                 </FormGroup>
 
                 <FormGroup>
-                  <Label for="location">Location</Label>
+                  <Label for="city">City</Label>
                   <Input
-                    id="location"
+                    id="city"
                     type="text"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
                     disabled={loading}
-                    placeholder="City, State/Country"
+                    placeholder="Enter your city"
                   />
+                </FormGroup>
+
+                <FormGroup>
+                  <Label for="state">State</Label>
+                  <Input
+                    id="state"
+                    type="select"
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                    disabled={loading}
+                  >
+                    <option value="">Select a state...</option>
+                    {US_STATES.map((stateName) => (
+                      <option key={stateName} value={stateName}>
+                        {stateName}
+                      </option>
+                    ))}
+                  </Input>
                 </FormGroup>
 
                 <FormGroup>
