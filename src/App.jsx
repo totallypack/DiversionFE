@@ -10,6 +10,8 @@
   import SubInterestDetail from "./components/SubInterestDetail";
   import BrowseInterests from "./components/BrowseInterests";
   import ProfileView from "./components/ProfileView";
+  import CreateEvent from "./components/CreateEvent";
+  import EventDetail from "./components/EventDetail";
 
   function App() {
     return (
@@ -26,6 +28,8 @@
           <Route path="/subinterest/:id" element={<SubInterestDetail />} />
           <Route path="/my-profile" element={<ProfileView />} />
           <Route path="/my-profile-view" element={<ProfileView />} />
+          <Route path="/events/create" element={<CreateEvent />} />
+          <Route path="/events/:id" element={<EventDetail />} />
         </Routes>
       </div>
     );

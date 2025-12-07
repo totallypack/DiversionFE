@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { getMyProfile } from "../managers/profileManager";
 import { getMyInterests } from "../managers/userInterestManager";
+import { getMyEvents } from "../managers/eventManager";
 import NavBar from "./NavBar";
 import {
   Container,
@@ -18,6 +19,7 @@ import {
 export default function ProfileView() {
   const [profile, setProfile] = useState(null);
   const [interests, setInterests] = useState([]);
+  const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -32,12 +34,14 @@ export default function ProfileView() {
 
   const loadProfileData = async () => {
     try {
-      const [profileData, interestsData] = await Promise.all([
+      const [profileData, interestsData, eventsData] = await Promise.all([
         getMyProfile(),
         getMyInterests(),
+        getMyEvents(),
       ]);
       setProfile(profileData);
       setInterests(interestsData);
+      setEvents(eventsData);
       setLoading(false);
     } catch (err) {
       setError("Failed to load profile. Please try again.");
@@ -191,6 +195,76 @@ export default function ProfileView() {
                     No interests selected yet.{" "}
                     <Link to="/select-interests">Add some interests</Link> to
                     get personalized recommendations!
+                  </Alert>
+                )}
+              </CardBody>
+            </Card>
+
+            <Card className="mb-4">
+              <CardBody>
+                <div className="d-flex justify-content-between align-items-start mb-3">
+                  <h4>My Events</h4>
+                  <Button
+                    color="primary"
+                    outline
+                    size="sm"
+                    onClick={() => navigate("/events/create")}
+                  >
+                    Create Event
+                  </Button>
+                </div>
+
+                {events.length > 0 ? (
+                  <Row className="g-3">
+                    {events.map((event) => (
+                      <Col key={event.id} md={6}>
+                        <Card
+                          className="h-100 border"
+                          style={{
+                            cursor: "pointer",
+                            transition: "all 0.2s",
+                          }}
+                          onClick={() => navigate(`/events/${event.id}`)}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = "translateY(-2px)";
+                            e.currentTarget.style.boxShadow = "0 4px 8px rgba(0,0,0,0.1)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = "translateY(0)";
+                            e.currentTarget.style.boxShadow = "none";
+                          }}
+                        >
+                          <CardBody>
+                            <h6 className="mb-2">{event.title}</h6>
+                            <div className="mb-2">
+                              <Badge color={event.eventType === "Online" ? "success" : "primary"} className="me-1">
+                                {event.eventType === "Online" ? "Online" : "In-Person"}
+                              </Badge>
+                              {event.interestTagName && (
+                                <Badge color="info">{event.interestTagName}</Badge>
+                              )}
+                            </div>
+                            <p className="text-muted small mb-1">
+                              <strong>Start:</strong>{" "}
+                              {new Date(event.startDateTime).toLocaleDateString()}{" "}
+                              {new Date(event.startDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                            {event.description && (
+                              <p className="text-muted small mb-0">
+                                {event.description.length > 80
+                                  ? `${event.description.substring(0, 80)}...`
+                                  : event.description}
+                              </p>
+                            )}
+                          </CardBody>
+                        </Card>
+                      </Col>
+                    ))}
+                  </Row>
+                ) : (
+                  <Alert color="info" fade={false}>
+                    You haven't created any events yet.{" "}
+                    <Link to="/events/create">Create your first event</Link>!
                   </Alert>
                 )}
               </CardBody>
