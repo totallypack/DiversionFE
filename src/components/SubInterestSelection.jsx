@@ -56,12 +56,10 @@ export default function SubInterestSelection() {
     setError("");
 
     try {
-      // Add each selected sub-interest
       for (const subInterestId of selectedSubInterests) {
         await addInterest(subInterestId);
       }
 
-      // Navigate back to categories to select more
       navigate("/select-interests", { state: { showSuccessMessage: true, addedCount: selectedSubInterests.length } });
     } catch (err) {
       setSaving(false);

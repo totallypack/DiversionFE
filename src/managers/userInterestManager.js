@@ -6,7 +6,7 @@ export const getMyInterests = async () => {
     headers: {
       "Content-Type": "application/json",
     },
-    credentials: "include", // Required for cookie authentication
+    credentials: "include",
   });
 
   if (!res.ok) {
@@ -23,7 +23,7 @@ export const addInterest = async (subInterestId) => {
     headers: {
       "Content-Type": "application/json",
     },
-    credentials: "include", // Required for cookie authentication
+    credentials: "include",
     body: JSON.stringify({ subInterestId }),
   });
 
@@ -38,7 +38,7 @@ export const addInterest = async (subInterestId) => {
 export const removeInterest = async (userInterestId) => {
   const res = await fetch(`${apiUrl}/${userInterestId}`, {
     method: "DELETE",
-    credentials: "include", // Required for cookie authentication
+    credentials: "include",
   });
 
   if (!res.ok) {
@@ -52,7 +52,7 @@ export const removeInterest = async (userInterestId) => {
 export const removeInterestBySubInterestId = async (subInterestId) => {
   const res = await fetch(`${apiUrl}/subinterest/${subInterestId}`, {
     method: "DELETE",
-    credentials: "include", // Required for cookie authentication
+    credentials: "include",
   });
 
   if (!res.ok) {

@@ -6,7 +6,7 @@ export const register = async (userData) => {
     headers: {
       "Content-Type": "application/json",
     },
-    credentials: "include", // Required for cookie authentication
+    credentials: "include",
     body: JSON.stringify(userData),
   });
   if (!res.ok) {
@@ -23,7 +23,7 @@ export const login = async (credentials) => {
     headers: {
       "Content-Type": "application/json",
     },
-    credentials: "include", // Required for cookie authentication
+    credentials: "include",
     body: JSON.stringify(credentials),
   });
   if (!res.ok) {
@@ -37,7 +37,7 @@ export const login = async (credentials) => {
 export const logout = async () => {
   const res = await fetch(`${apiUrl}/logout`, {
     method: "POST",
-    credentials: "include", // Required for cookie authentication
+    credentials: "include",
   });
   if (!res.ok) {
     throw new Error("Logout failed");

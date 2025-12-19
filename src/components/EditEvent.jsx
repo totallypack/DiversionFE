@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { createEvent } from "../managers/eventManager";
+import { useNavigate, useParams } from "react-router-dom";
+import { getEventById, updateEvent } from "../managers/eventManager";
 import { getAllInterestsWithSubInterests } from "../managers/interestManager";
+import { getMyProfile } from "../managers/profileManager";
 import NavBar from "./NavBar";
 import {
   Container,
@@ -30,7 +31,8 @@ const US_STATES = [
   "West Virginia", "Wisconsin", "Wyoming"
 ];
 
-export default function CreateEvent() {
+export default function EditEvent() {
+  const { id } = useParams();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [startDateTime, setStartDateTime] = useState("");
@@ -46,12 +48,55 @@ export default function CreateEvent() {
   const [subInterests, setSubInterests] = useState([]);
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingEvent, setLoadingEvent] = useState(true);
   const [loadingInterests, setLoadingInterests] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     loadInterests();
-  }, []);
+    loadEventData();
+  }, [id]);
+
+  const loadEventData = async () => {
+    try {
+      const [eventData, profileData] = await Promise.all([
+        getEventById(id),
+        getMyProfile(),
+      ]);
+
+      if (eventData.organizerId !== profileData.userId) {
+        setErrors(["You are not authorized to edit this event."]);
+        setLoadingEvent(false);
+        return;
+      }
+
+      //populate the form fields
+      setTitle(eventData.title || "");
+      setDescription(eventData.description || "");
+      setEventType(eventData.eventType || "Online");
+      setStreetAddress(eventData.streetAddress || "");
+      setCity(eventData.city || "");
+      setState(eventData.state || "");
+      setMeetingUrl(eventData.meetingUrl || "");
+      setInterestTagId(eventData.interestTagId || "");
+      setRequiresRsvp(eventData.requiresRsvp || false);
+
+      // Format datetime for input fields
+      if (eventData.startDateTime) {
+        const start = new Date(eventData.startDateTime);
+        setStartDateTime(start.toISOString().slice(0, 16));
+      }
+      if (eventData.endDateTime) {
+        const end = new Date(eventData.endDateTime);
+        setEndDateTime(end.toISOString().slice(0, 16));
+      }
+
+      setLoadingEvent(false);
+    } catch (error) {
+      setErrors(["Failed to load event. Please try again."]);
+      setLoadingEvent(false);
+    }
+  };
 
   const loadInterests = async () => {
     try {
@@ -90,10 +135,6 @@ export default function CreateEvent() {
 
     if (startDateTime && endDateTime && new Date(endDateTime) <= new Date(startDateTime)) {
       newErrors.push("End date must be after start date");
-    }
-
-    if (startDateTime && new Date(startDateTime) <= new Date()) {
-      newErrors.push("Start date must be in the future");
     }
 
     if (!interestTagId) {
@@ -142,8 +183,8 @@ export default function CreateEvent() {
         requiresRsvp,
       };
 
-      const result = await createEvent(eventData);
-      navigate(`/events/${result.id}`);
+      await updateEvent(id, eventData);
+      navigate(`/events/${id}`);
     } catch (error) {
       setLoading(false);
       if (error.errors) {
@@ -164,7 +205,7 @@ export default function CreateEvent() {
           <Col md={8} lg={6}>
             <Card>
               <CardBody>
-                <h2 className="text-center mb-4">Create New Event</h2>
+                <h2 className="text-center mb-4">Edit Event</h2>
 
                 {errors.length > 0 && (
                   <Alert color="danger" fade={false}>
@@ -176,9 +217,9 @@ export default function CreateEvent() {
                   </Alert>
                 )}
 
-                {loadingInterests ? (
+                {(loadingInterests || loadingEvent) ? (
                   <div className="text-center">
-                    <p>Loading interests...</p>
+                    <p>Loading...</p>
                   </div>
                 ) : (
                   <Form onSubmit={handleSubmit}>
@@ -289,6 +330,9 @@ export default function CreateEvent() {
                           disabled={loading}
                           placeholder="https://zoom.us/j/..."
                         />
+                        <div className="small text-muted mt-1">
+                          Enter the virtual meeting link (Zoom, Google Meet, etc.)
+                        </div>
                       </FormGroup>
                     )}
 
@@ -363,7 +407,7 @@ export default function CreateEvent() {
 
                     <div className="d-grid gap-2 mt-4">
                       <Button color="primary" type="submit" disabled={loading}>
-                        {loading ? "Creating Event..." : "Create Event"}
+                        {loading ? "Updating Event..." : "Update Event"}
                       </Button>
                       <Button
                         color="secondary"

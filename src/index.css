@@ -1,10 +1,265 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  --font-secondary: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  --font-size-xs: 0.75rem;     /* 12px */
+  --font-size-sm: 0.875rem;    /* 14px */
+  --font-size-base: 1rem;      /* 16px */
+  --font-size-lg: 1.125rem;    /* 18px */
+  --font-size-xl: 1.25rem;     /* 20px */
+  --font-size-2xl: 1.5rem;     /* 24px */
+  --font-size-3xl: 1.875rem;   /* 30px */
+  --font-size-4xl: 2.25rem;    /* 36px */
+
+  /* Main Colors */
+  --color-light-grey: rgb(226, 226, 226);
+  --color-light-green: rgb(208, 238, 168);
+  --color-purple: rgb(196, 186, 255);
+
+  /* Accent Colors */
+  --color-cyan: rgb(51, 223, 223);
+  --color-gold: rgb(185, 142, 1);
+  --color-coral: rgb(255, 118, 118);
+  --color-hot-pink: rgb(196, 21, 212);
+
+  /* Neutral Colors */
+  --color-black: rgb(0, 0, 0);
+  --color-white: rgb(255, 255, 255);
+
+  /* Hover Colors */
+  --color-purple-hover: rgb(176, 161, 255);
+  --color-light-grey-hover: rgb(208, 208, 208);
+  --color-light-green-hover: rgb(229, 247, 208);
+  --color-cyan-hover: rgb(43, 197, 197);
+  --color-gold-hover: rgb(160, 125, 1);
+  --color-coral-hover: rgb(255, 94, 94);
+
+  /* Text Colors */
+  --color-text-muted: rgb(102, 102, 102);
+
+  /* Bootstrap Color Overrides */
+  --bs-primary: #c4baff;
+  --bs-primary-rgb: 196, 186, 255;
+  --bs-secondary: #e2e2e2;
+  --bs-secondary-rgb: 226, 226, 226;
+  --bs-success: #f3ffe3;
+  --bs-success-rgb: 243, 255, 227;
+  --bs-info: #33dfdf;
+  --bs-info-rgb: 51, 223, 223;
+  --bs-warning: #b98e01;
+  --bs-warning-rgb: 185, 142, 1;
+  --bs-danger: #ff7676;
+  --bs-danger-rgb: 255, 118, 118;
+  --bs-light: #e2e2e2;
+  --bs-light-rgb: 226, 226, 226;
+  --bs-dark: #000000;
+  --bs-dark-rgb: 0, 0, 0;
+  --bs-body-color: #000000;
+  --bs-body-bg: #ffffff;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  padding-top: 90px;
+  font-family: var(--font-secondary);
+  font-weight: var(--font-weight-normal);
+  font-size: var(--font-size-base);
+  font-variant: (small-caps);
+  line-height: 1.625;
+  color: var(--color-black);
+  background-color: var(--color-white);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  color: var(--color-black);
+}
+
+button, .btn, .nav-link, .navbar-brand {
+  font-family: var(--font-primary);
+}
+
+/* Hide scrollbar */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Bootstrap Button Color Overrides */
+.btn-primary {
+  background-color: var(--color-purple);
+  border-color: var(--color-purple);
+  color: var(--color-black);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-purple-hover);
+  border-color: var(--color-purple-hover);
+  color: var(--color-black);
+}
+
+.btn-secondary {
+  background-color: var(--color-light-grey);
+  border-color: var(--color-light-grey);
+  color: var(--color-black);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-light-grey-hover);
+  border-color: var(--color-light-grey-hover);
+  color: var(--color-black);
+}
+
+.btn-success {
+  background-color: var(--color-light-green);
+  border-color: var(--color-light-green);
+  color: var(--color-black);
+}
+
+.btn-success:hover {
+  background-color: var(--color-light-green-hover);
+  border-color: var(--color-light-green-hover);
+  color: var(--color-black);
+}
+
+.btn-info {
+  background-color: var(--color-cyan);
+  border-color: var(--color-cyan);
+  color: var(--color-black);
+}
+
+.btn-info:hover {
+  background-color: var(--color-cyan-hover);
+  border-color: var(--color-cyan-hover);
+  color: var(--color-black);
+}
+
+.btn-warning {
+  background-color: var(--color-gold);
+  border-color: var(--color-gold);
+  color: var(--color-white);
+}
+
+.btn-warning:hover {
+  background-color: var(--color-gold-hover);
+  border-color: var(--color-gold-hover);
+  color: var(--color-white);
+}
+
+.btn-danger {
+  background-color: var(--color-coral);
+  border-color: var(--color-coral);
+  color: var(--color-black);
+}
+
+.btn-danger:hover {
+  background-color: var(--color-coral-hover);
+  border-color: var(--color-coral-hover);
+  color: var(--color-black);
+}
+
+/* Bootstrap Badge Color Overrides */
+.badge.bg-primary {
+  background-color: var(--color-purple) !important;
+  color: var(--color-black);
+}
+
+.badge.bg-secondary {
+  background-color: var(--color-light-grey) !important;
+  color: var(--color-black);
+}
+
+.badge.bg-success {
+  background-color: var(--color-light-green) !important;
+  color: var(--color-black);
+}
+
+.badge.bg-info {
+  background-color: var(--color-cyan) !important;
+  color: var(--color-black);
+}
+
+.badge.bg-warning {
+  background-color: var(--color-gold) !important;
+  color: var(--color-white);
+}
+
+.badge.bg-danger {
+  background-color: var(--color-coral) !important;
+  color: var(--color-black);
+}
+
+/* Bootstrap Alert Color Overrides */
+.alert-primary {
+  background-color: var(--color-purple);
+  border-color: var(--color-purple);
+  color: var(--color-black);
+}
+
+.alert-success {
+  background-color: var(--color-light-green);
+  border-color: var(--color-light-green);
+  color: var(--color-black);
+}
+
+.alert-info {
+  background-color: var(--color-cyan);
+  border-color: var(--color-cyan);
+  color: var(--color-black);
+}
+
+.alert-warning {
+  background-color: var(--color-gold);
+  border-color: var(--color-gold);
+  color: var(--color-white);
+}
+
+.alert-danger {
+  background-color: var(--color-coral);
+  border-color: var(--color-coral);
+  color: var(--color-black);
+}
+
+/* Card styling */
+.card {
+  border-color: var(--color-light-grey);
+  color: var(--color-black);
+}
+
+.card-body {
+  color: var(--color-black);
+}
+
+/* Text color utilities */
+.text-muted {
+  color: var(--color-text-muted) !important;
+}
+
+/* Link colors */
+a {
+  color: var(--color-black);
+  text-decoration: underline;
+}
+
+a:hover {
+  color: var(--color-cyan);
 }

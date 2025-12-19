@@ -6,7 +6,7 @@ export const getMyProfile = async () => {
     headers: {
       "Content-Type": "application/json",
     },
-    credentials: "include", // Required for cookie authentication
+    credentials: "include",
   });
 
   if (!res.ok) {
@@ -16,7 +16,7 @@ export const getMyProfile = async () => {
     if (res.status === 401 || res.status === 500) {
       throw new Error("Unauthorized");
     }
-    // Only try to parse JSON if there's content
+
     const contentType = res.headers.get("content-type");
     if (contentType && contentType.includes("application/json")) {
       return res.json().then((error) => {
@@ -34,7 +34,7 @@ export const createProfile = async (profileData) => {
     headers: {
       "Content-Type": "application/json",
     },
-    credentials: "include", // Required for cookie authentication
+    credentials: "include",
     body: JSON.stringify(profileData),
   });
 
@@ -52,7 +52,7 @@ export const updateProfile = async (profileData) => {
     headers: {
       "Content-Type": "application/json",
     },
-    credentials: "include", // Required for cookie authentication
+    credentials: "include",
     body: JSON.stringify(profileData),
   });
 
@@ -67,7 +67,7 @@ export const updateProfile = async (profileData) => {
 export const deleteProfile = async () => {
   const res = await fetch(apiUrl, {
     method: "DELETE",
-    credentials: "include", // Required for cookie authentication
+    credentials: "include",
   });
 
   if (!res.ok) {
@@ -76,4 +76,24 @@ export const deleteProfile = async () => {
     });
   }
   return res.status === 204 ? null : await res.json();
+};
+
+export const getUserProfile = async (userId) => {
+  const res = await fetch(`${apiUrl}/${userId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    if (res.status === 404) {
+      return null;
+    }
+    return res.json().then((error) => {
+      throw error;
+    });
+  }
+  return await res.json();
 };

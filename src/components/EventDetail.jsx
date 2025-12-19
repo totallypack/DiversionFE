@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getEventById } from "../managers/eventManager";
+import { getEventById, deleteEvent } from "../managers/eventManager";
+import { getMyProfile } from "../managers/profileManager";
+import { getMyAttendanceForEvent, rsvpToEvent, updateRsvp, deleteRsvp } from "../managers/eventAttendeeManager";
+import { formatDateTime } from "../utils/dateUtils";
 import NavBar from "./NavBar";
+import RsvpButtonGroup from "./RsvpButtonGroup";
 import {
   Container,
   Row,
@@ -16,8 +20,11 @@ import {
 
 export default function EventDetail() {
   const [event, setEvent] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [myAttendance, setMyAttendance] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [rsvpLoading, setRsvpLoading] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -27,8 +34,14 @@ export default function EventDetail() {
 
   const loadEvent = async () => {
     try {
-      const data = await getEventById(id);
-      setEvent(data);
+      const [eventData, profileData, attendanceData] = await Promise.all([
+        getEventById(id),
+        getMyProfile(),
+        getMyAttendanceForEvent(id),
+      ]);
+      setEvent(eventData);
+      setCurrentUser(profileData);
+      setMyAttendance(attendanceData);
       setLoading(false);
     } catch (err) {
       setError("Failed to load event details. Please try again.");
@@ -36,16 +49,51 @@ export default function EventDetail() {
     }
   };
 
-  const formatDateTime = (dateTimeString) => {
-    const date = new Date(dateTimeString);
-    return date.toLocaleString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-    });
+  const isOrganizer = currentUser && event && currentUser.userId === event.organizerId;
+
+  const handleRsvp = async (status) => {
+    setRsvpLoading(true);
+    try {
+      if (myAttendance) {
+        await updateRsvp(myAttendance.id, status);
+      } else {
+        await rsvpToEvent(id, status);
+      }
+      await loadEvent();
+    } catch (err) {
+      setError(err.message || "Failed to RSVP. Please try again.");
+    } finally {
+      setRsvpLoading(false);
+    }
+  };
+
+  const handleCancelRsvp = async () => {
+    if (!myAttendance) return;
+    setRsvpLoading(true);
+    try {
+      await deleteRsvp(myAttendance.id);
+      await loadEvent();
+    } catch (err) {
+      setError(err.message || "Failed to cancel RSVP. Please try again.");
+    } finally {
+      setRsvpLoading(false);
+    }
+  };
+
+  const handleEditEvent = () => {
+    navigate(`/events/${id}/edit`);
+  };
+
+  const handleDeleteEvent = async () => {
+    if (!window.confirm("Are you sure you want to delete this event?")) {
+      return;
+    }
+    try {
+      await deleteEvent(id);
+      navigate("/dashboard");
+    } catch (err) {
+      setError("Failed to delete event. Please try again.");
+    }
   };
 
   if (loading) {
@@ -177,7 +225,14 @@ export default function EventDetail() {
                         .filter((a) => a.status === "Going")
                         .map((attendee) => (
                           <li key={attendee.id} className="mb-1">
-                            {attendee.username}
+                            <span
+                              style={{ cursor: "pointer", color: "#0d6efd" }}
+                              onClick={() => navigate(`/profile/${attendee.userId}`)}
+                              onMouseEnter={(e) => e.target.style.textDecoration = "underline"}
+                              onMouseLeave={(e) => e.target.style.textDecoration = "none"}
+                            >
+                              {attendee.username}
+                            </span>
                           </li>
                         ))}
                     </ul>
@@ -185,9 +240,50 @@ export default function EventDetail() {
                 )}
 
                 <div className="mt-4">
-                  <Button color="primary" onClick={() => navigate("/dashboard")}>
-                    Return to Home
-                  </Button>
+                  {isOrganizer ? (
+                    //organizer controls
+                    <div className="d-flex gap-2 flex-wrap">
+                      <Button color="primary" onClick={handleEditEvent}>
+                        Edit Event
+                      </Button>
+                      <Button color="danger" outline onClick={handleDeleteEvent}>
+                        Delete Event
+                      </Button>
+                      <Button color="secondary" outline onClick={() => navigate("/dashboard")}>
+                        Return to Home
+                      </Button>
+                    </div>
+                  ) : (
+                    //non-organizer controls (RSVP)
+                    <div>
+                      <div className="mb-3">
+                        <h6 className="mb-2">
+                          {myAttendance ? "Your RSVP Status" : "RSVP to this Event"}
+                        </h6>
+                        <RsvpButtonGroup
+                          myAttendance={myAttendance}
+                          onRsvp={handleRsvp}
+                          loading={rsvpLoading}
+                        />
+                      </div>
+                      <div className="d-flex gap-2 flex-wrap">
+                        {myAttendance && (
+                          <Button
+                            color="danger"
+                            outline
+                            onClick={handleCancelRsvp}
+                            disabled={rsvpLoading}
+                            size="sm"
+                          >
+                            {rsvpLoading ? "Canceling..." : "Cancel RSVP"}
+                          </Button>
+                        )}
+                        <Button color="secondary" outline onClick={() => navigate("/dashboard")} size="sm">
+                          Return to Home
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </CardBody>
             </Card>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllInterestsWithSubInterests } from "../managers/interestManager";
+import { filterInterestsBySearchTerm } from "../utils/filterUtils";
 import NavBar from "./NavBar";
 import {
   Container,
@@ -55,21 +56,7 @@ export default function BrowseInterests() {
     }
   };
 
-  const filteredInterests = interests.map(interest => {
-    const filteredSubInterests = interest.subInterests?.filter(subInterest =>
-      subInterest.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      subInterest.description?.toLowerCase().includes(searchTerm.toLowerCase())
-    ) || [];
-
-    return {
-      ...interest,
-      subInterests: filteredSubInterests
-    };
-  }).filter(interest =>
-    interest.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    interest.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    interest.subInterests.length > 0
-  );
+  const filteredInterests = filterInterestsBySearchTerm(interests, searchTerm);
 
   if (loading) {
     return (
@@ -143,7 +130,10 @@ export default function BrowseInterests() {
               <Row className="g-4">
                 {filteredInterests.map((interest) => (
                   <Col key={interest.id} xs={12}>
-                    <div ref={(el) => (interestRefs.current[interest.id] = el)}>
+                    <div
+                      ref={(el) => (interestRefs.current[interest.id] = el)}
+                      style={{ scrollMarginTop: "100px" }}
+                    >
                       <Card>
                     <CardBody>
                       <div className="mb-3">
