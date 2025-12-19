@@ -4,10 +4,6 @@ import { getAllInterests } from "../managers/interestManager";
 import { getMyInterests } from "../managers/userInterestManager";
 import {
   Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
   Alert,
   Spinner,
   Button,
@@ -27,15 +23,12 @@ export default function InterestSelection() {
     loadInterests();
     loadMyInterestsCount();
 
-    // Show success message if coming from adding interests
     if (location.state?.showSuccessMessage) {
       const count = location.state?.addedCount || 0;
       setSuccessMessage(`Successfully added ${count} interest${count !== 1 ? 's' : ''}!`);
 
-      // Clear the message after 3 seconds
       setTimeout(() => setSuccessMessage(""), 3000);
 
-      // Clear the navigation state
       navigate(location.pathname, { replace: true, state: {} });
     }
   }, []);
@@ -56,7 +49,7 @@ export default function InterestSelection() {
       const myInterests = await getMyInterests();
       setMyInterestsCount(myInterests.length);
     } catch (err) {
-      // Silently fail - user may not have any interests yet
+      //user may not have any interests yet
       setMyInterestsCount(0);
     }
   };
@@ -71,40 +64,85 @@ export default function InterestSelection() {
 
   if (loading) {
     return (
-      <Container className="mt-5 text-center">
-        <Spinner color="primary" />
-        <p className="mt-3">Loading interests...</p>
-      </Container>
+      <div style={{
+        marginTop: "-180px",
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "var(--color-purple)",
+      }}>
+        <div className="text-center">
+          <Spinner color="dark" />
+          <p className="mt-3">Loading interests...</p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Container className="mt-5">
-      <Row className="justify-content-center">
-        <Col md={10}>
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <div>
-              <h2 className="mb-2">What are you interested in?</h2>
-              <p className="text-muted mb-0">
-                Select a category to explore specific interests
-              </p>
+    <div style={{
+      marginTop: "-180px",
+      marginBottom: "-20px",
+      minHeight: "calc(100vh + 100px)",
+      display: "flex",
+      flexDirection: "column"
+    }}>
+      {/* Header Section - Light Green */}
+      <section
+        style={{
+          backgroundColor: "var(--color-light-green)",
+          width: "100vw",
+          margin: 0,
+          padding: "130px 20px 60px",
+          minHeight: "250px",
+          position: "relative",
+          left: "50%",
+          right: "50%",
+          marginLeft: "-50vw",
+          marginRight: "-50vw",
+        }}
+      >
+        <Container style={{ maxWidth: "800px", textAlign: "center" }}>
+          <h1 className="mb-3">What are you interested in?</h1>
+          <p className="lead mb-0">
+            Select a category to explore specific interests
+          </p>
+          {myInterestsCount > 0 && (
+            <div className="mt-4">
+              <Badge color="primary" pill style={{ fontSize: "1.2rem", padding: "0.5rem 1rem" }}>
+                {myInterestsCount} interest{myInterestsCount !== 1 ? 's' : ''} selected
+              </Badge>
             </div>
-            {myInterestsCount > 0 && (
-              <div className="text-center">
-                <Badge color="primary" pill style={{ fontSize: "1.2rem", padding: "0.5rem 1rem" }}>
-                  {myInterestsCount} interest{myInterestsCount !== 1 ? 's' : ''} selected
-                </Badge>
-              </div>
-            )}
-          </div>
+          )}
+        </Container>
+      </section>
 
-          {successMessage && <Alert color="success">{successMessage}</Alert>}
-          {error && <Alert color="danger">{error}</Alert>}
+      {/* Interests Grid Section - Purple */}
+      <section
+        style={{
+          backgroundColor: "var(--color-purple)",
+          width: "100vw",
+          margin: 0,
+          padding: "80px 20px",
+          paddingBottom: "150px",
+          minHeight: "500px",
+          position: "relative",
+          left: "50%",
+          right: "50%",
+          marginLeft: "-50vw",
+          marginRight: "-50vw",
+          flex: 1,
+        }}
+      >
+        <Container style={{ maxWidth: "1200px" }}>
+          {successMessage && <Alert color="success" className="text-center">{successMessage}</Alert>}
+          {error && <Alert color="danger" className="text-center">{error}</Alert>}
 
           {myInterestsCount > 0 && (
-            <div className="text-center mb-4">
+            <div className="text-center mb-5">
               <Button
-                color="success"
+                color="dark"
                 size="lg"
                 onClick={handleDoneSelecting}
               >
@@ -113,29 +151,45 @@ export default function InterestSelection() {
             </div>
           )}
 
-          <Row className="g-3">
+          <div className="row g-4">
             {interests.map((interest) => (
-              <Col key={interest.id} md={6} lg={4}>
-                <Card
-                  className="h-100 interest-card"
-                  style={{ cursor: "pointer" }}
+              <div key={interest.id} className="col-md-6 col-lg-4">
+                <div
+                  style={{
+                    backgroundColor: "rgba(226, 226, 226, 0.6)",
+                    padding: "30px",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    transition: "all 0.2s",
+                    height: "100%",
+                    textAlign: "center",
+                    border: "2px solid transparent",
+                  }}
                   onClick={() => handleInterestClick(interest.id)}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-3px)";
+                    e.currentTarget.style.boxShadow = "0 6px 12px rgba(0,0,0,0.15)";
+                    e.currentTarget.style.borderColor = "var(--color-cyan)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "none";
+                    e.currentTarget.style.borderColor = "transparent";
+                  }}
                 >
-                  <CardBody className="text-center">
-                    <h5>{interest.name}</h5>
-                    <p className="text-muted small mb-0">
-                      {interest.description}
-                    </p>
-                  </CardBody>
-                </Card>
-              </Col>
+                  <h4 className="mb-3">{interest.name}</h4>
+                  <p className="text-muted mb-0">
+                    {interest.description}
+                  </p>
+                </div>
+              </div>
             ))}
-          </Row>
+          </div>
 
           {myInterestsCount > 0 && (
             <div className="text-center mt-5">
               <Button
-                color="success"
+                color="dark"
                 size="lg"
                 onClick={handleDoneSelecting}
               >
@@ -143,8 +197,8 @@ export default function InterestSelection() {
               </Button>
             </div>
           )}
-        </Col>
-      </Row>
-    </Container>
+        </Container>
+      </section>
+    </div>
   );
 }

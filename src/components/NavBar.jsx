@@ -1,9 +1,39 @@
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Navbar, NavbarBrand, Nav, NavItem, NavLink, Button } from "reactstrap";
+import {
+  Navbar,
+  NavbarBrand,
+  Nav,
+  NavItem,
+  NavLink,
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
+} from "reactstrap";
+import "./NavBar.css";
 
 export default function NavBar() {
   const navigate = useNavigate();
   const username = localStorage.getItem("username");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [navbarOpacity, setNavbarOpacity] = useState(1);
+
+  const toggle = () => setDropdownOpen(prevState => !prevState);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const maxScroll = 500; // Scroll distance to reach full transparency
+
+      // Calculate opacity: 1 at top, 0 at maxScroll
+      const opacity = Math.max(0, 1 - (scrollPosition / maxScroll));
+      setNavbarOpacity(opacity);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -12,7 +42,12 @@ export default function NavBar() {
   };
 
   return (
-    <Navbar color="dark" dark expand="md" className="mb-4" sticky="top">
+    <Navbar
+      expand="md"
+      className="navbar-custom"
+      sticky="top"
+      style={{ backgroundColor: `rgba(var(--color-purple-rgb), ${navbarOpacity})` }}
+    >
       <NavbarBrand tag={Link} to="/dashboard">
         Diversion
       </NavbarBrand>
@@ -28,21 +63,42 @@ export default function NavBar() {
           </NavLink>
         </NavItem>
         <NavItem>
+          <NavLink tag={Link} to="/friends">
+            Friends
+          </NavLink>
+        </NavItem>
+        <NavItem>
           <NavLink tag={Link} to="/events/create">
             Create Event
           </NavLink>
         </NavItem>
-        <NavItem>
-          <NavLink tag={Link} to="/my-profile">
-            My Profile
-          </NavLink>
-        </NavItem>
-        <NavItem className="d-flex align-items-center ms-2">
-          <span className="text-light me-3">Hi, {username}!</span>
-          <Button color="outline-light" size="sm" onClick={handleLogout}>
-            Logout
-          </Button>
-        </NavItem>
+        <Dropdown nav isOpen={dropdownOpen} toggle={toggle}>
+          <DropdownToggle
+            nav
+            className="dropdown-btn-toggle"
+            aria-expanded={dropdownOpen}
+            aria-label="User menu"
+            role="menuitem"
+          >
+            <span className="dropdown-text-wrapper">
+              Hi, {username}!
+              <span className="caret-custom"></span>
+            </span>
+            <span className="underline-effect"></span>
+          </DropdownToggle>
+          <DropdownMenu end>
+            <DropdownItem tag={Link} to="/my-profile">
+              My Profile
+            </DropdownItem>
+            <DropdownItem tag={Link} to="/select-interests">
+              My Interests
+            </DropdownItem>
+            <DropdownItem divider />
+            <DropdownItem onClick={handleLogout}>
+              Logout
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
       </Nav>
     </Navbar>
   );

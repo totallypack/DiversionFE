@@ -38,7 +38,6 @@ export default function SubInterestDetail() {
       const data = await getSubInterestById(id);
       setSubInterest(data);
 
-      // Check if user has this interest
       try {
         const myInterests = await getMyInterests();
         const hasInterest = myInterests.some(
@@ -46,7 +45,6 @@ export default function SubInterestDetail() {
         );
         setIsInMyInterests(hasInterest);
       } catch (err) {
-        // User might not be logged in, that's okay
         setIsInMyInterests(false);
       }
 

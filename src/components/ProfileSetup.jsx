@@ -50,7 +50,7 @@ export default function ProfileSetup() {
   }, []);
 
   const loadProfile = async () => {
-    // Check if user is logged in (check username since auth is cookie-based)
+
     const username = localStorage.getItem("username");
     if (!username) {
       navigate("/login");
@@ -127,7 +127,6 @@ export default function ProfileSetup() {
       setSuccess(true);
       setLoading(false);
 
-      // Redirect based on whether this is edit or create
       setTimeout(() => {
         if (isEdit) {
           navigate("/my-profile");

@@ -1,7 +1,7 @@
-const apiUrl = "/api/events";
+const apiUrl = "/api/eventattendees";
 
-export const getAllEvents = async () => {
-  const res = await fetch(apiUrl, {
+export const getEventAttendees = async (eventId) => {
+  const res = await fetch(`${apiUrl}/event/${eventId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -17,41 +17,7 @@ export const getAllEvents = async () => {
   return await res.json();
 };
 
-export const getEventById = async (id) => {
-  const res = await fetch(`${apiUrl}/${id}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
-
-  if (!res.ok) {
-    return res.json().then((error) => {
-      throw error;
-    });
-  }
-  return await res.json();
-};
-
-export const getEventsByInterest = async (interestTagId) => {
-  const res = await fetch(`${apiUrl}/interest/${interestTagId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
-
-  if (!res.ok) {
-    return res.json().then((error) => {
-      throw error;
-    });
-  }
-  return await res.json();
-};
-
-export const getMyEvents = async () => {
+export const getMyAttendance = async () => {
   const res = await fetch(`${apiUrl}/my`, {
     method: "GET",
     headers: {
@@ -68,8 +34,8 @@ export const getMyEvents = async () => {
   return await res.json();
 };
 
-export const getRsvpdEvents = async () => {
-  const res = await fetch(`${apiUrl}/rsvpd`, {
+export const getMyAttendanceForEvent = async (eventId) => {
+  const res = await fetch(`${apiUrl}/event/${eventId}/me`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -78,6 +44,9 @@ export const getRsvpdEvents = async () => {
   });
 
   if (!res.ok) {
+    if (res.status === 404) {
+      return null;
+    }
     return res.json().then((error) => {
       throw error;
     });
@@ -85,14 +54,14 @@ export const getRsvpdEvents = async () => {
   return await res.json();
 };
 
-export const createEvent = async (eventData) => {
+export const rsvpToEvent = async (eventId, status = "Going") => {
   const res = await fetch(apiUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     credentials: "include",
-    body: JSON.stringify(eventData),
+    body: JSON.stringify({ eventId, status }),
   });
 
   if (!res.ok) {
@@ -103,14 +72,14 @@ export const createEvent = async (eventData) => {
   return await res.json();
 };
 
-export const updateEvent = async (id, eventData) => {
-  const res = await fetch(`${apiUrl}/${id}`, {
+export const updateRsvp = async (attendeeId, status) => {
+  const res = await fetch(`${apiUrl}/${attendeeId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
     credentials: "include",
-    body: JSON.stringify(eventData),
+    body: JSON.stringify({ status }),
   });
 
   if (!res.ok) {
@@ -121,8 +90,8 @@ export const updateEvent = async (id, eventData) => {
   return;
 };
 
-export const deleteEvent = async (id) => {
-  const res = await fetch(`${apiUrl}/${id}`, {
+export const deleteRsvp = async (attendeeId) => {
+  const res = await fetch(`${apiUrl}/${attendeeId}`, {
     method: "DELETE",
     credentials: "include",
   });

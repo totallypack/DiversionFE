@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
-import { getMyProfile } from "../managers/profileManager";
+import { useNavigate, Link, useLocation, useParams } from "react-router-dom";
+import { getMyProfile, getUserProfile } from "../managers/profileManager";
 import { getMyInterests } from "../managers/userInterestManager";
-import { getMyEvents } from "../managers/eventManager";
+import { getMyEvents, getRsvpdEvents } from "../managers/eventManager";
+import { checkFriendship, addFriend, removeFriend } from "../managers/friendManager";
+import { transformInterestsForDisplay } from "../utils/transformUtils";
 import NavBar from "./NavBar";
+import EventCard from "./EventCard";
 import {
   Container,
   Row,
@@ -17,34 +20,87 @@ import {
 } from "reactstrap";
 
 export default function ProfileView() {
+  const { userId } = useParams();
   const [profile, setProfile] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const [interests, setInterests] = useState([]);
   const [events, setEvents] = useState([]);
+  const [rsvpdEvents, setRsvpdEvents] = useState([]);
+  const [isFriend, setIsFriend] = useState(false);
+  const [friendLoading, setFriendLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
   const isOnboarding = location.state?.onboarding === true;
+  const isOwnProfile = !userId || (currentUser && currentUser.userId === userId);
 
   useEffect(() => {
     loadProfileData();
-  }, []);
+  }, [userId]);
 
   const loadProfileData = async () => {
     try {
-      const [profileData, interestsData, eventsData] = await Promise.all([
-        getMyProfile(),
-        getMyInterests(),
-        getMyEvents(),
-      ]);
-      setProfile(profileData);
-      setInterests(interestsData);
-      setEvents(eventsData);
+      const myProfile = await getMyProfile();
+      setCurrentUser(myProfile);
+
+      if (!userId || myProfile.userId === userId) {
+        // Loading own profile
+        const [interestsData, eventsData, rsvpdEventsData] = await Promise.all([
+          getMyInterests(),
+          getMyEvents(),
+          getRsvpdEvents(),
+        ]);
+        setProfile(myProfile);
+        setInterests(interestsData);
+        setEvents(eventsData);
+        setRsvpdEvents(rsvpdEventsData);
+      } else {
+        // Loading another user's profile
+        const [otherProfile, friendStatus] = await Promise.all([
+          getUserProfile(userId),
+          checkFriendship(userId),
+        ]);
+
+        setProfile(otherProfile);
+        setIsFriend(friendStatus);
+        // Transform interests from SubInterestWithInterestDto to match UserInterestDto structure
+        const transformedInterests = transformInterestsForDisplay(otherProfile.interests);
+        setInterests(transformedInterests);
+      }
+
       setLoading(false);
     } catch (err) {
       setError("Failed to load profile. Please try again.");
       setLoading(false);
+    }
+  };
+
+  const handleAddFriend = async () => {
+    setFriendLoading(true);
+    try {
+      await addFriend(userId);
+      setIsFriend(true);
+    } catch (err) {
+      setError(err.message || "Failed to add friend.");
+    } finally {
+      setFriendLoading(false);
+    }
+  };
+
+  const handleRemoveFriend = async () => {
+    if (!window.confirm("Are you sure you want to remove this friend?")) {
+      return;
+    }
+    setFriendLoading(true);
+    try {
+      await removeFriend(userId);
+      setIsFriend(false);
+    } catch (err) {
+      setError(err.message || "Failed to remove friend.");
+    } finally {
+      setFriendLoading(false);
     }
   };
 
@@ -90,15 +146,40 @@ export default function ProfileView() {
             <Card className="mb-4">
               <CardBody>
                 <div className="d-flex justify-content-between align-items-start mb-3">
-                  <h3>My Profile</h3>
-                  <Button
-                    color="primary"
-                    outline
-                    size="sm"
-                    onClick={handleEditProfile}
-                  >
-                    Edit Profile
-                  </Button>
+                  <h3>{isOwnProfile ? "My Profile" : `${profile?.displayName || "User"}'s Profile`}</h3>
+                  {isOwnProfile ? (
+                    <Button
+                      color="primary"
+                      outline
+                      size="sm"
+                      onClick={handleEditProfile}
+                    >
+                      Edit Profile
+                    </Button>
+                  ) : (
+                    <div className="d-flex gap-2">
+                      {isFriend ? (
+                        <Button
+                          color="warning"
+                          outline
+                          size="sm"
+                          onClick={handleRemoveFriend}
+                          disabled={friendLoading}
+                        >
+                          {friendLoading ? "Removing..." : "Remove Friend"}
+                        </Button>
+                      ) : (
+                        <Button
+                          color="success"
+                          size="sm"
+                          onClick={handleAddFriend}
+                          disabled={friendLoading}
+                        >
+                          {friendLoading ? "Adding..." : "Add Friend"}
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {profile ? (
@@ -162,15 +243,17 @@ export default function ProfileView() {
             <Card className="mb-4">
               <CardBody>
                 <div className="d-flex justify-content-between align-items-start mb-3">
-                  <h4>My Interests</h4>
-                  <Button
-                    color="primary"
-                    outline
-                    size="sm"
-                    onClick={handleAddMoreInterests}
-                  >
-                    Add More
-                  </Button>
+                  <h4>{isOwnProfile ? "My Interests" : "Interests"}</h4>
+                  {isOwnProfile && (
+                    <Button
+                      color="primary"
+                      outline
+                      size="sm"
+                      onClick={handleAddMoreInterests}
+                    >
+                      Add More
+                    </Button>
+                  )}
                 </div>
 
                 {interests.length > 0 ? (
@@ -192,73 +275,44 @@ export default function ProfileView() {
                     ))}
                   </div>
                 ) : (
-                  <Alert color="info">
-                    No interests selected yet.{" "}
-                    <Link to="/select-interests">Add some interests</Link> to
-                    get personalized recommendations!
+                  <Alert color="info" fade={false}>
+                    {isOwnProfile ? (
+                      <>
+                        No interests selected yet.{" "}
+                        <Link to="/select-interests">Add some interests</Link> to
+                        get personalized recommendations!
+                      </>
+                    ) : (
+                      "This user hasn't added any interests yet."
+                    )}
                   </Alert>
                 )}
               </CardBody>
             </Card>
 
-            <Card className="mb-4">
-              <CardBody>
-                <div className="d-flex justify-content-between align-items-start mb-3">
-                  <h4>My Events</h4>
-                  <Button
-                    color="primary"
-                    outline
-                    size="sm"
-                    onClick={() => navigate("/events/create")}
-                  >
-                    Create Event
-                  </Button>
-                </div>
+            {isOwnProfile && (
+              <Card className="mb-4">
+                <CardBody>
+                  <div className="d-flex justify-content-between align-items-start mb-3">
+                    <h4>My Events</h4>
+                    <Button
+                      color="primary"
+                      outline
+                      size="sm"
+                      onClick={() => navigate("/events/create")}
+                    >
+                      Create Event
+                    </Button>
+                  </div>
 
                 {events.length > 0 ? (
                   <Row className="g-3">
                     {events.map((event) => (
                       <Col key={event.id} md={6}>
-                        <Card
-                          className="h-100 border"
-                          style={{
-                            cursor: "pointer",
-                            transition: "all 0.2s",
-                          }}
+                        <EventCard
+                          event={event}
                           onClick={() => navigate(`/events/${event.id}`)}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = "translateY(-2px)";
-                            e.currentTarget.style.boxShadow = "0 4px 8px rgba(0,0,0,0.1)";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = "translateY(0)";
-                            e.currentTarget.style.boxShadow = "none";
-                          }}
-                        >
-                          <CardBody>
-                            <h6 className="mb-2">{event.title}</h6>
-                            <div className="mb-2">
-                              <Badge color={event.eventType === "Online" ? "success" : "primary"} className="me-1">
-                                {event.eventType === "Online" ? "Online" : "In-Person"}
-                              </Badge>
-                              {event.interestTagName && (
-                                <Badge color="info">{event.interestTagName}</Badge>
-                              )}
-                            </div>
-                            <p className="text-muted small mb-1">
-                              <strong>Start:</strong>{" "}
-                              {new Date(event.startDateTime).toLocaleDateString()}{" "}
-                              {new Date(event.startDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </p>
-                            {event.description && (
-                              <p className="text-muted small mb-0">
-                                {event.description.length > 80
-                                  ? `${event.description.substring(0, 80)}...`
-                                  : event.description}
-                              </p>
-                            )}
-                          </CardBody>
-                        </Card>
+                        />
                       </Col>
                     ))}
                   </Row>
@@ -270,15 +324,33 @@ export default function ProfileView() {
                 )}
               </CardBody>
             </Card>
+            )}
 
-            <Card>
-              <CardBody>
-                <h4>RSVP'd Events</h4>
-                <div className="text-center py-4 text-muted">
-                  <em>RSVP'd events will show here</em>
-                </div>
-              </CardBody>
-            </Card>
+            {isOwnProfile && (
+              <Card>
+                <CardBody>
+                  <h4>RSVP'd Events</h4>
+                  {rsvpdEvents.length > 0 ? (
+                    <Row className="g-3">
+                      {rsvpdEvents.map((event) => (
+                        <Col key={event.id} md={6}>
+                          <EventCard
+                            event={event}
+                            onClick={() => navigate(`/events/${event.id}`)}
+                            showRsvpStatus={true}
+                          />
+                        </Col>
+                      ))}
+                    </Row>
+                  ) : (
+                    <Alert color="info" fade={false}>
+                      You haven't RSVP'd to any events yet.{" "}
+                      <Link to="/browse-interests">Find events to join</Link>!
+                    </Alert>
+                  )}
+                </CardBody>
+              </Card>
+            )}
 
             {isOnboarding && (
               <div className="text-center mt-4">
