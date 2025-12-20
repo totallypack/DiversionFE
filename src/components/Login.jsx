@@ -7,9 +7,9 @@ import {
   Label,
   Input,
   Button,
-  Alert,
-  Container,
 } from "reactstrap";
+import FullWidthSection from "./common/FullWidthSection";
+import ErrorAlert from "./common/ErrorAlert";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -54,130 +54,91 @@ export default function Login() {
       display: "flex",
       flexDirection: "column"
     }}>
-      {/* Welcome Section - Light Green */}
-      <section
-        style={{
-          backgroundColor: "var(--color-light-green)",
-          width: "100vw",
-          margin: 0,
-          padding: "130px 20px 60px",
-          minHeight: "250px",
-          position: "relative",
-          left: "50%",
-          right: "50%",
-          marginLeft: "-50vw",
-          marginRight: "-50vw",
-        }}
+      {/* Welcome Section*/}
+      <FullWidthSection
+        backgroundColor="var(--color-light-grey)"
+        padding="130px 20px 60px"
+        minHeight="250px"
+        containerMaxWidth="600px"
       >
-        <Container style={{ maxWidth: "600px", textAlign: "center" }}>
+        <div style={{ textAlign: "center" }}>
           <h1 className="mb-3">Welcome Back!</h1>
           <p className="mb-0">Sign in to continue your journey</p>
-        </Container>
-      </section>
+        </div>
+      </FullWidthSection>
 
-      {/* Form Section - Coral */}
-      <section
-        style={{
-          backgroundColor: "var(--color-coral)",
-          width: "100vw",
-          margin: 0,
-          padding: "80px 20px",
-          minHeight: "400px",
-          position: "relative",
-          left: "50%",
-          right: "50%",
-          marginLeft: "-50vw",
-          marginRight: "-50vw",
-        }}
+      {/* Form Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-purple)"
+        padding="80px 20px"
+        minHeight="400px"
+        containerMaxWidth="500px"
       >
-        <Container style={{ maxWidth: "500px" }}>
-          <div
-            style={{
-              backgroundColor: "rgba(226, 226, 226, 0.6)",
-              padding: "40px",
-              borderRadius: "8px",
-            }}
-          >
-            {errors.length > 0 && (
-              <Alert color="danger">
-                <ul className="mb-0">
-                  {errors.map((error, index) => (
-                    <li key={index}>{error}</li>
-                  ))}
-                </ul>
-              </Alert>
-            )}
+        <div
+          style={{
+            backgroundColor: "rgba(226, 226, 226, 0.6)",
+            padding: "40px",
+            borderRadius: "8px",
+          }}
+        >
+          <ErrorAlert errors={errors} />
 
-            <Form onSubmit={handleSubmit}>
-              <FormGroup>
-                <Label for="username">Username</Label>
-                <Input
-                  id="username"
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  disabled={loading}
-                  placeholder="Enter your username"
-                  autoComplete="on"
-                />
-              </FormGroup>
-
-              <FormGroup>
-                <Label for="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={loading}
-                  placeholder="Enter your password"
-                />
-              </FormGroup>
-
-              <Button
-                color="primary"
-                type="submit"
-                block
+          <Form onSubmit={handleSubmit}>
+            <FormGroup>
+              <Label for="username">Username</Label>
+              <Input
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 disabled={loading}
-                className="mt-3"
-              >
-                {loading ? "Logging in..." : "Log In"}
-              </Button>
-            </Form>
-          </div>
-        </Container>
-      </section>
+                placeholder="Enter your username"
+                autoComplete="on"
+              />
+            </FormGroup>
 
-      {/* Sign Up Section - Cyan */}
-      <section
-        style={{
-          backgroundColor: "var(--color-cyan)",
-          width: "100vw",
-          margin: 0,
-          padding: "60px 20px",
-          paddingBottom: "150px",
-          minHeight: "200px",
-          position: "relative",
-          left: "50%",
-          right: "50%",
-          marginLeft: "-50vw",
-          marginRight: "-50vw",
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-        }}
+            <FormGroup>
+              <Label for="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
+                placeholder="Enter your password"
+              />
+            </FormGroup>
+
+            <Button
+              color="secondary"
+              type="submit"
+              block
+              disabled={loading}
+              className="mt-3"
+            >
+              {loading ? "Logging in..." : "Log In"}
+            </Button>
+          </Form>
+        </div>
+      </FullWidthSection>
+
+      {/* Sign Up Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-light-green)"
+        padding="60px 20px 150px"
+        minHeight="200px"
+        containerMaxWidth="600px"
       >
-        <Container style={{ maxWidth: "600px", textAlign: "center" }}>
+        <div style={{ textAlign: "center" }}>
           <h4 className="mb-3">Don't have an account?</h4>
           <p className="mb-3">Join our community and start connecting with people who share your interests!</p>
-          <Link to="/register">
+          <Link to="/signup">
             <Button color="dark" outline size="lg">
               Sign Up Here
             </Button>
           </Link>
-        </Container>
-      </section>
+        </div>
+      </FullWidthSection>
     </div>
   );
 }

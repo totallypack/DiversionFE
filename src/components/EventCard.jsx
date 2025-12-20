@@ -1,22 +1,8 @@
-import { Card, CardBody, Badge } from "reactstrap";
+import { Badge } from "reactstrap";
 import { formatDate, formatTime } from "../utils/dateUtils";
+import HoverCard from "./common/HoverCard";
 
-/**
- * @param {object} event - Event data object
- * @param {function} onClick - Click handler for the card
- * @param {boolean} showRsvpStatus - Whether to show RSVP status badge
- */
 export default function EventCard({ event, onClick, showRsvpStatus = false }) {
-  const handleMouseEnter = (e) => {
-    e.currentTarget.style.transform = "translateY(-2px)";
-    e.currentTarget.style.boxShadow = "0 4px 8px rgba(0,0,0,0.1)";
-  };
-
-  const handleMouseLeave = (e) => {
-    e.currentTarget.style.transform = "translateY(0)";
-    e.currentTarget.style.boxShadow = "none";
-  };
-
   const getRsvpBadgeColor = (status) => {
     switch (status) {
       case "Going":
@@ -31,17 +17,15 @@ export default function EventCard({ event, onClick, showRsvpStatus = false }) {
   };
 
   return (
-    <Card
-      className="h-100 border"
-      style={{
-        cursor: "pointer",
-        transition: "all 0.2s",
-      }}
+    <HoverCard
+      backgroundColor="white"
+      hoverTransform="translateY(-2px)"
+      hoverShadow="0 4px 8px rgba(0,0,0,0.1)"
+      borderWidth="1px"
+      borderColor="#dee2e6"
+      height="100%"
       onClick={onClick}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
     >
-      <CardBody>
         {showRsvpStatus && event.rsvpStatus && (
           <div className="d-flex justify-content-between align-items-start mb-2">
             <h6 className="mb-0">{event.title}</h6>
@@ -76,7 +60,6 @@ export default function EventCard({ event, onClick, showRsvpStatus = false }) {
               : event.description}
           </p>
         )}
-      </CardBody>
-    </Card>
+    </HoverCard>
   );
 }

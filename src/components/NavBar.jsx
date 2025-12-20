@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { getMyProfile } from "../managers/profileManager";
 import {
   Navbar,
   NavbarBrand,
@@ -18,15 +19,29 @@ export default function NavBar() {
   const username = localStorage.getItem("username");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [navbarOpacity, setNavbarOpacity] = useState(1);
+  const [profile, setProfile] = useState(null);
+  const [imageError, setImageError] = useState(false);
 
   const toggle = () => setDropdownOpen(prevState => !prevState);
 
   useEffect(() => {
+    loadProfile();
+  }, []);
+
+  const loadProfile = async () => {
+    try {
+      const profileData = await getMyProfile();
+      setProfile(profileData);
+    } catch (err) {
+      console.error("Failed to load profile:", err);
+    }
+  };
+
+  useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
-      const maxScroll = 500; // Scroll distance to reach full transparency
+      const maxScroll = 500;
 
-      // Calculate opacity: 1 at top, 0 at maxScroll
       const opacity = Math.max(0, 1 - (scrollPosition / maxScroll));
       setNavbarOpacity(opacity);
     };
@@ -46,7 +61,7 @@ export default function NavBar() {
       expand="md"
       className="navbar-custom"
       sticky="top"
-      style={{ backgroundColor: `rgba(var(--color-purple-rgb), ${navbarOpacity})` }}
+      style={{ backgroundColor: `rgba(var(--color-light-grey-rgb), ${navbarOpacity})` }}
     >
       <NavbarBrand tag={Link} to="/dashboard">
         Diversion
@@ -80,9 +95,39 @@ export default function NavBar() {
             aria-label="User menu"
             role="menuitem"
           >
-            <span className="dropdown-text-wrapper">
-              Hi, {username}!
-              <span className="caret-custom"></span>
+            <span className="dropdown-text-wrapper" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              {profile?.profilePicUrl && !imageError ? (
+                <img
+                  src={profile.profilePicUrl}
+                  alt={profile.displayName || username}
+                  style={{
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                  }}
+                  onError={() => setImageError(true)}
+                />
+              ) : (
+                <div
+                  style={{
+                    width: "32px",
+                    height: "32px",
+                    borderRadius: "50%",
+                    backgroundColor: "var(--color-gold)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "var(--color-black)",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                  }}
+                >
+                  {(profile?.displayName || username)?.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <span>{profile?.displayName || username}</span>
+              <span className="arrow-custom"></span>
             </span>
             <span className="underline-effect"></span>
           </DropdownToggle>

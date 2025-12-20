@@ -6,12 +6,9 @@ import { getMyAttendanceForEvent, rsvpToEvent, updateRsvp, deleteRsvp } from "..
 import { formatDateTime } from "../utils/dateUtils";
 import NavBar from "./NavBar";
 import RsvpButtonGroup from "./RsvpButtonGroup";
+import FullWidthSection from "./common/FullWidthSection";
 import {
   Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
   Alert,
   Spinner,
   Button,
@@ -34,14 +31,20 @@ export default function EventDetail() {
 
   const loadEvent = async () => {
     try {
-      const [eventData, profileData, attendanceData] = await Promise.all([
+      const [eventData, profileData] = await Promise.all([
         getEventById(id),
         getMyProfile(),
-        getMyAttendanceForEvent(id),
       ]);
       setEvent(eventData);
       setCurrentUser(profileData);
-      setMyAttendance(attendanceData);
+
+      try {
+        const attendanceData = await getMyAttendanceForEvent(id);
+        setMyAttendance(attendanceData);
+      } catch (err) {
+        setMyAttendance(null);
+      }
+
       setLoading(false);
     } catch (err) {
       setError("Failed to load event details. Please try again.");
@@ -98,198 +101,247 @@ export default function EventDetail() {
 
   if (loading) {
     return (
-      <>
+      <div style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "var(--color-light-grey)",
+      }}>
         <NavBar />
-        <Container className="mt-5 text-center">
-          <Spinner color="primary" />
+        <div className="text-center">
+          <Spinner color="dark" />
           <p className="mt-3">Loading event...</p>
-        </Container>
-      </>
+        </div>
+      </div>
     );
   }
 
   if (error || !event) {
     return (
-      <>
+      <div style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: "var(--color-light-grey)",
+      }}>
         <NavBar />
         <Container className="mt-5">
-          <Alert color="danger" fade={false}>
+          <Alert color="danger" className="text-center">
             {error || "Event not found"}
           </Alert>
-          <Button color="primary" onClick={() => navigate(-1)}>
-            Back
-          </Button>
+          <div className="text-center">
+            <Button color="dark" onClick={() => navigate(-1)}>
+              Back
+            </Button>
+          </div>
         </Container>
-      </>
+      </div>
     );
   }
 
   return (
-    <>
+    <div style={{
+      marginBottom: "-20px",
+      minHeight: "calc(100vh + 100px)",
+      display: "flex",
+      flexDirection: "column"
+    }}>
       <NavBar />
-      <Container className="mt-5">
-        <Row className="justify-content-center">
-          <Col md={10} lg={8}>
-            <Card className="mb-4">
-              <CardBody>
-                <div className="mb-4">
-                  <h2 className="mb-3">{event.title}</h2>
-                  <div className="mb-3">
-                    {event.interestTag && (
-                      <Badge
-                        color="info"
-                        className="me-2"
-                        style={{ cursor: "pointer" }}
-                        onClick={() =>
-                          navigate(`/subinterest/${event.interestTag.id}`)
-                        }
-                      >
-                        {event.interestTag.name}
-                      </Badge>
-                    )}
-                    <Badge color={event.eventType === "Online" ? "success" : "primary"}>
-                      {event.eventType === "Online" ? "Online Event" : "In-Person Event"}
-                    </Badge>
-                    {event.requiresRsvp && (
-                      <Badge color="warning" className="ms-2">
-                        RSVP Required
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-muted mb-1">
-                    <strong>Organizer:</strong> {event.organizerUsername}
-                  </p>
-                </div>
 
-                {event.description && (
-                  <div className="mb-4">
-                    <h5 className="mb-2">Description</h5>
-                    <p className="text-muted">{event.description}</p>
-                  </div>
-                )}
+      {/* Event Header Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-light-grey)"
+        padding="130px 20px 60px"
+        minHeight="300px"
+        containerMaxWidth="900px"
+      >
+        <div className="text-center">
+          <h1 className="mb-3">{event.title}</h1>
+          <div className="mb-3">
+            {event.interestTag && (
+              <Badge
+                color="info"
+                className="me-2"
+                style={{ cursor: "pointer", fontSize: "0.9rem" }}
+                onClick={() =>
+                  navigate(`/subinterest/${event.interestTag.id}`)
+                }
+              >
+                {event.interestTag.name}
+              </Badge>
+            )}
+            <Badge
+              color={event.eventType === "Online" ? "success" : "primary"}
+              style={{ fontSize: "0.9rem" }}
+            >
+              {event.eventType === "Online" ? "Online Event" : "In-Person Event"}
+            </Badge>
+            {event.requiresRsvp && (
+              <Badge color="warning" className="ms-2" style={{ fontSize: "0.9rem" }}>
+                RSVP Required
+              </Badge>
+            )}
+          </div>
+          <p className="text-muted mb-0">
+            <strong>Organizer:</strong> {event.organizerUsername}
+          </p>
+        </div>
+      </FullWidthSection>
 
-                <div className="mb-4">
-                  <h5 className="mb-3">Event Details</h5>
-                  <div className="mb-2">
-                    <strong>Start:</strong>{" "}
-                    <span className="text-muted">
-                      {formatDateTime(event.startDateTime)}
-                    </span>
-                  </div>
-                  <div className="mb-2">
-                    <strong>End:</strong>{" "}
-                    <span className="text-muted">
-                      {formatDateTime(event.endDateTime)}
-                    </span>
-                  </div>
+      {/* Event Details Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-purple)"
+        padding="80px 20px"
+        minHeight="400px"
+        containerMaxWidth="900px"
+      >
+        <div
+          style={{
+            backgroundColor: "rgba(226, 226, 226, 0.6)",
+            padding: "40px",
+            borderRadius: "8px",
+          }}
+        >
+          {event.description && (
+            <div className="mb-4">
+              <h4 className="mb-3">Description</h4>
+              <p className="text-muted">{event.description}</p>
+            </div>
+          )}
 
-                  {event.eventType === "Online" && event.meetingUrl && (
-                    <div className="mb-2">
-                      <strong>Meeting Link:</strong>{" "}
-                      <a
-                        href={event.meetingUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary"
-                      >
-                        {event.meetingUrl}
-                      </a>
-                    </div>
+          <div className="mb-4">
+            <h4 className="mb-3">Event Details</h4>
+            <div className="mb-2">
+              <strong>Start:</strong>{" "}
+              <span className="text-muted">
+                {formatDateTime(event.startDateTime)}
+              </span>
+            </div>
+            <div className="mb-2">
+              <strong>End:</strong>{" "}
+              <span className="text-muted">
+                {formatDateTime(event.endDateTime)}
+              </span>
+            </div>
+
+            {event.eventType === "Online" && event.meetingUrl && (
+              <div className="mb-2">
+                <strong>Meeting Link:</strong>{" "}
+                <a
+                  href={event.meetingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "var(--color-cyan)" }}
+                >
+                  {event.meetingUrl}
+                </a>
+              </div>
+            )}
+
+            {event.eventType === "InPerson" && (event.streetAddress || event.city || event.state) && (
+              <div className="mb-2">
+                <strong>Location:</strong>{" "}
+                <span className="text-muted">
+                  {event.streetAddress && (
+                    <>
+                      {event.streetAddress}
+                      <br />
+                    </>
                   )}
+                  {event.city && event.state
+                    ? `${event.city}, ${event.state}`
+                    : event.city || event.state}
+                </span>
+              </div>
+            )}
+          </div>
 
-                  {event.eventType === "InPerson" && (event.streetAddress || event.city || event.state) && (
-                    <div className="mb-2">
-                      <strong>Location:</strong>{" "}
-                      <span className="text-muted">
-                        {event.streetAddress && (
-                          <>
-                            {event.streetAddress}
-                            <br />
-                          </>
-                        )}
-                        {event.city && event.state
-                          ? `${event.city}, ${event.state}`
-                          : event.city || event.state}
+          {event.attendees && event.attendees.length > 0 && (
+            <div>
+              <h4 className="mb-3">
+                Attendees ({event.attendeeCount} going)
+              </h4>
+              <ul className="list-unstyled">
+                {event.attendees
+                  .filter((a) => a.status === "Going")
+                  .map((attendee) => (
+                    <li key={attendee.id} className="mb-1">
+                      <span
+                        style={{ cursor: "pointer", color: "var(--color-black)" }}
+                        onClick={() => navigate(`/profile/${attendee.userId}`)}
+                        onMouseEnter={(e) => {
+                          e.target.style.textDecoration = "underline";
+                          e.target.style.color = "var(--color-cyan)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.textDecoration = "none";
+                          e.target.style.color = "var(--color-black)";
+                        }}
+                      >
+                        {attendee.username}
                       </span>
-                    </div>
-                  )}
-                </div>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </FullWidthSection>
 
-                {event.attendees && event.attendees.length > 0 && (
-                  <div className="mb-4">
-                    <h5 className="mb-3">
-                      Attendees ({event.attendeeCount} going)
-                    </h5>
-                    <ul className="list-unstyled">
-                      {event.attendees
-                        .filter((a) => a.status === "Going")
-                        .map((attendee) => (
-                          <li key={attendee.id} className="mb-1">
-                            <span
-                              style={{ cursor: "pointer", color: "#0d6efd" }}
-                              onClick={() => navigate(`/profile/${attendee.userId}`)}
-                              onMouseEnter={(e) => e.target.style.textDecoration = "underline"}
-                              onMouseLeave={(e) => e.target.style.textDecoration = "none"}
-                            >
-                              {attendee.username}
-                            </span>
-                          </li>
-                        ))}
-                    </ul>
-                  </div>
-                )}
-
-                <div className="mt-4">
-                  {isOrganizer ? (
-                    //organizer controls
-                    <div className="d-flex gap-2 flex-wrap">
-                      <Button color="primary" onClick={handleEditEvent}>
-                        Edit Event
-                      </Button>
-                      <Button color="danger" outline onClick={handleDeleteEvent}>
-                        Delete Event
-                      </Button>
-                      <Button color="secondary" outline onClick={() => navigate("/dashboard")}>
-                        Return to Home
-                      </Button>
-                    </div>
-                  ) : (
-                    //non-organizer controls (RSVP)
-                    <div>
-                      <div className="mb-3">
-                        <h6 className="mb-2">
-                          {myAttendance ? "Your RSVP Status" : "RSVP to this Event"}
-                        </h6>
-                        <RsvpButtonGroup
-                          myAttendance={myAttendance}
-                          onRsvp={handleRsvp}
-                          loading={rsvpLoading}
-                        />
-                      </div>
-                      <div className="d-flex gap-2 flex-wrap">
-                        {myAttendance && (
-                          <Button
-                            color="danger"
-                            outline
-                            onClick={handleCancelRsvp}
-                            disabled={rsvpLoading}
-                            size="sm"
-                          >
-                            {rsvpLoading ? "Canceling..." : "Cancel RSVP"}
-                          </Button>
-                        )}
-                        <Button color="secondary" outline onClick={() => navigate("/dashboard")} size="sm">
-                          Return to Home
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
-    </>
+      {/* RSVP/Actions Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-light-green)"
+        padding="80px 20px 150px"
+        minHeight="300px"
+        containerMaxWidth="800px"
+      >
+        {isOrganizer ? (
+          <div className="text-center">
+            <h4 className="mb-4">Organizer Controls</h4>
+            <div className="d-flex gap-3 flex-wrap justify-content-center">
+              <Button color="dark" size="lg" onClick={handleEditEvent}>
+                Edit Event
+              </Button>
+              <Button color="secondary" outline size="lg" onClick={handleDeleteEvent}>
+                Delete Event
+              </Button>
+              <Button color="secondary" outline size="lg" onClick={() => navigate("/dashboard")}>
+                Return to Home
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <div className="text-center mb-4">
+              <h4 className="mb-3">
+                {myAttendance ? "Your RSVP Status" : "RSVP to this Event"}
+              </h4>
+              <RsvpButtonGroup
+                myAttendance={myAttendance}
+                onRsvp={handleRsvp}
+                loading={rsvpLoading}
+              />
+            </div>
+            <div className="d-flex gap-3 flex-wrap justify-content-center mt-4">
+              {myAttendance && (
+                <Button
+                  color="danger"
+                  outline
+                  size="lg"
+                  onClick={handleCancelRsvp}
+                  disabled={rsvpLoading}
+                >
+                  {rsvpLoading ? "Canceling..." : "Cancel RSVP"}
+                </Button>
+              )}
+              <Button color="secondary" outline size="lg" onClick={() => navigate("/dashboard")}>
+                Return to Home
+              </Button>
+            </div>
+          </div>
+        )}
+      </FullWidthSection>
+    </div>
   );
 }

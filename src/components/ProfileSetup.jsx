@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createProfile, updateProfile, getMyProfile } from "../managers/profileManager";
+import { US_STATES } from "../constants/locationConstants";
+import ErrorAlert from "./common/ErrorAlert";
+import NavBar from "./NavBar";
+import FullWidthSection from "./common/FullWidthSection";
 import {
   Form,
   FormGroup,
@@ -8,25 +12,7 @@ import {
   Input,
   Button,
   Alert,
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
 } from "reactstrap";
-
-const US_STATES = [
-  "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
-  "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho",
-  "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana",
-  "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota",
-  "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
-  "New Hampshire", "New Jersey", "New Mexico", "New York",
-  "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon",
-  "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
-  "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
-  "West Virginia", "Wisconsin", "Wyoming"
-];
 
 export default function ProfileSetup() {
   const [displayName, setDisplayName] = useState("");
@@ -39,6 +25,7 @@ export default function ProfileSetup() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({
     displayName: "",
   });
@@ -59,7 +46,7 @@ export default function ProfileSetup() {
 
     try {
       const profile = await getMyProfile();
-      if (profile) {
+      if (profile && profile.id !== "00000000-0000-0000-0000-000000000000") {
         setIsEdit(true);
         setDisplayName(profile.displayName || "");
         setBio(profile.bio || "");
@@ -147,34 +134,58 @@ export default function ProfileSetup() {
   };
 
   return (
-    <Container className="mt-5">
-      <Row className="justify-content-center">
-        <Col md={8} lg={6}>
-          <Card>
-            <CardBody>
-              <h2 className="text-center mb-4">
-                {isEdit ? "Edit Your Profile" : "Create Your Profile"}
-              </h2>
+    <div style={{
+      marginBottom: "-20px",
+      minHeight: "calc(100vh + 100px)",
+      display: "flex",
+      flexDirection: "column"
+    }}>
+      <NavBar />
 
-              {success && (
-                <Alert color="success" fade={false}>
-                  {isEdit
-                    ? "Profile updated successfully! Redirecting to your profile..."
-                    : "Profile created successfully! Redirecting to interest selection..."}
-                </Alert>
-              )}
+      {/* Header Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-light-grey)"
+        padding="130px 20px 60px"
+        minHeight="250px"
+        containerMaxWidth="800px"
+      >
+        <div className="text-center">
+          <h1 className="mb-3">
+            {isEdit ? "Edit Your Profile" : "Create Your Profile"}
+          </h1>
+          <p className="lead mb-0">
+            {isEdit
+              ? "Update your profile information"
+              : "Tell us about yourself to get started"}
+          </p>
+        </div>
+      </FullWidthSection>
 
-              {errors.length > 0 && (
-                <Alert color="danger" fade={false}>
-                  <ul className="mb-0">
-                    {errors.map((error, index) => (
-                      <li key={index}>{error}</li>
-                    ))}
-                  </ul>
-                </Alert>
-              )}
+      {/* Form Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-purple)"
+        padding="80px 20px 150px"
+        minHeight="600px"
+        containerMaxWidth="800px"
+      >
+        <div
+          style={{
+            backgroundColor: "rgba(226, 226, 226, 0.6)",
+            padding: "40px",
+            borderRadius: "8px",
+          }}
+        >
+          {success && (
+            <Alert color="success" fade={false}>
+              {isEdit
+                ? "Profile updated successfully! Redirecting to your profile..."
+                : "Profile created successfully! Redirecting to interest selection..."}
+            </Alert>
+          )}
 
-              <Form onSubmit={handleSubmit}>
+          <ErrorAlert errors={errors} />
+
+          <Form onSubmit={handleSubmit}>
                 <FormGroup>
                   <Label for="displayName">
                     Display Name <span className="text-danger">*</span>
@@ -262,7 +273,10 @@ export default function ProfileSetup() {
                     id="profilePicUrl"
                     type="url"
                     value={profilePicUrl}
-                    onChange={(e) => setProfilePicUrl(e.target.value)}
+                    onChange={(e) => {
+                      setProfilePicUrl(e.target.value);
+                      setImageError(false);
+                    }}
                     disabled={loading}
                     placeholder="https://example.com/your-photo.jpg"
                   />
@@ -275,47 +289,67 @@ export default function ProfileSetup() {
                   <FormGroup>
                     <Label>Preview</Label>
                     <div className="text-center">
-                      <img
-                        src={profilePicUrl}
-                        alt="Profile preview"
-                        style={{
-                          maxWidth: "150px",
-                          maxHeight: "150px",
-                          borderRadius: "50%",
-                          objectFit: "cover",
-                        }}
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                        }}
-                      />
+                      {!imageError ? (
+                        <img
+                          src={profilePicUrl}
+                          alt="Profile preview"
+                          style={{
+                            maxWidth: "150px",
+                            maxHeight: "150px",
+                            borderRadius: "50%",
+                            objectFit: "cover",
+                          }}
+                          onError={() => setImageError(true)}
+                        />
+                      ) : (
+                        <div>
+                          <div
+                            style={{
+                              width: "150px",
+                              height: "150px",
+                              borderRadius: "50%",
+                              backgroundColor: "#6c757d",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              color: "white",
+                              fontSize: "48px",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {displayName?.charAt(0).toUpperCase() || "?"}
+                          </div>
+                          <div className="text-danger small mt-2">
+                            ⚠️ Unable to load image from this URL
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </FormGroup>
                 )}
 
-                <div className="d-grid gap-2">
-                  <Button color="primary" type="submit" disabled={loading}>
-                    {loading
-                      ? isEdit
-                        ? "Updating..."
-                        : "Creating..."
-                      : isEdit
-                      ? "Update Profile"
-                      : "Create Profile"}
-                  </Button>
-                  <Button
-                    color="secondary"
-                    outline
-                    onClick={() => navigate("/")}
-                    disabled={loading}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </Form>
-            </CardBody>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+            <div className="d-grid gap-2">
+              <Button color="secondary" type="submit" disabled={loading}>
+                {loading
+                  ? isEdit
+                    ? "Updating..."
+                    : "Creating..."
+                  : isEdit
+                  ? "Update Profile"
+                  : "Create Profile"}
+              </Button>
+              <Button
+                color="secondary"
+                outline
+                onClick={() => navigate("/")}
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+            </div>
+          </Form>
+        </div>
+      </FullWidthSection>
+    </div>
   );
 }

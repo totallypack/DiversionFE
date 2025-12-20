@@ -1,65 +1,12 @@
+import { apiGet } from "../utils/apiClient";
+
 const apiUrl = "/api";
 
-export const getAllInterests = async () => {
-  const res = await fetch(`${apiUrl}/interests`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+export const getAllInterests = () => apiGet(`${apiUrl}/interests`);
 
-  if (!res.ok) {
-    return res.json().then((error) => {
-      throw error;
-    });
-  }
-  return await res.json();
-};
+export const getAllInterestsWithSubInterests = () =>
+  apiGet(`${apiUrl}/interests/with_subinterests`);
 
-export const getAllInterestsWithSubInterests = async () => {
-  const res = await fetch(`${apiUrl}/interests/with_subinterests`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+export const getInterestById = (id) => apiGet(`${apiUrl}/interests/${id}`);
 
-  if (!res.ok) {
-    return res.json().then((error) => {
-      throw error;
-    });
-  }
-  return await res.json();
-};
-
-export const getInterestById = async (id) => {
-  const res = await fetch(`${apiUrl}/interests/${id}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!res.ok) {
-    return res.json().then((error) => {
-      throw error;
-    });
-  }
-  return await res.json();
-};
-
-export const getSubInterestById = async (id) => {
-  const res = await fetch(`${apiUrl}/subinterests/${id}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!res.ok) {
-    return res.json().then((error) => {
-      throw error;
-    });
-  }
-  return await res.json();
-};
+export const getSubInterestById = (id) => apiGet(`${apiUrl}/subinterests/${id}`);

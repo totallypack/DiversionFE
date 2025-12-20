@@ -1,8 +1,3 @@
-/**
- * Formats a date-time string into a human-readable format
- * @param {string} dateTimeString - ISO date-time string
- * @returns {string} Formatted date-time string
- */
 export const formatDateTime = (dateTimeString) => {
   const date = new Date(dateTimeString);
   return date.toLocaleString("en-US", {
@@ -15,20 +10,10 @@ export const formatDateTime = (dateTimeString) => {
   });
 };
 
-/**
- * Formats a date string into a short date format
- * @param {string} dateString - ISO date string
- * @returns {string} Formatted date string
- */
 export const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString();
 };
 
-/**
- * Formats a date-time string into time only
- * @param {string} dateTimeString - ISO date-time string
- * @returns {string} Formatted time string
- */
 export const formatTime = (dateTimeString) => {
   return new Date(dateTimeString).toLocaleTimeString([], {
     hour: "2-digit",
@@ -36,11 +21,6 @@ export const formatTime = (dateTimeString) => {
   });
 };
 
-/**
- * Calculates time elapsed since a given timestamp
- * @param {string} timestamp - ISO timestamp
- * @returns {string} Human-readable time ago string
- */
 export const getTimeAgo = (timestamp) => {
   const now = new Date();
   const activityTime = new Date(timestamp);

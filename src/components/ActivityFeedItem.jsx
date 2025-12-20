@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { getTimeAgo } from "../utils/dateUtils";
 import {
@@ -5,19 +6,58 @@ import {
   getRsvpText,
 } from "../utils/activityUtils";
 
-/**
- * Renders a single activity feed item
- * @param {object} activity - Activity data object
- * @param {boolean} showBorder - Whether to show bottom border
- */
 export default function ActivityFeedItem({ activity, showBorder = true }) {
   const displayName = getActivityDisplayName(activity);
+  const [imageError, setImageError] = useState(false);
+
+  const renderProfilePic = () => {
+    const defaultAvatar = (
+      <span
+        style={{
+          width: "40px",
+          height: "40px",
+          borderRadius: "50%",
+          backgroundColor: "var(--color-hot-pink)",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "var(--color-black)",
+          fontWeight: "bold",
+          fontSize: "16px",
+          marginRight: "8px",
+          verticalAlign: "middle",
+        }}
+      >
+        {displayName?.charAt(0).toUpperCase() || "?"}
+      </span>
+    );
+
+    if (activity.profilePicUrl && !imageError) {
+      return (
+        <img
+          src={activity.profilePicUrl}
+          alt={displayName}
+          style={{
+            width: "40px",
+            height: "40px",
+            borderRadius: "50%",
+            objectFit: "cover",
+            marginRight: "8px",
+            verticalAlign: "middle",
+          }}
+          onError={() => setImageError(true)}
+        />
+      );
+    }
+    return defaultAvatar;
+  };
 
   const renderActivityMessage = () => {
     switch (activity.activityType) {
       case "EventCreated":
         return (
           <>
+            {renderProfilePic()}
             <Link
               to={`/profile/${activity.userId}`}
               className="text-decoration-none"
@@ -39,6 +79,7 @@ export default function ActivityFeedItem({ activity, showBorder = true }) {
         const rsvpText = getRsvpText(activity.rsvpStatus);
         return (
           <>
+            {renderProfilePic()}
             <Link
               to={`/profile/${activity.userId}`}
               className="text-decoration-none"
@@ -59,6 +100,7 @@ export default function ActivityFeedItem({ activity, showBorder = true }) {
       case "InterestAdded":
         return (
           <>
+            {renderProfilePic()}
             <Link
               to={`/profile/${activity.userId}`}
               className="text-decoration-none"
@@ -84,46 +126,8 @@ export default function ActivityFeedItem({ activity, showBorder = true }) {
 
   return (
     <div className="pb-3 mb-3">
-      <div className="d-flex align-items-start">
-        {/* Profile Picture */}
-        <div style={{ flexShrink: 0 }}>
-          {activity.profilePicUrl ? (
-            <img
-              src={activity.profilePicUrl}
-              alt={displayName}
-              style={{
-                width: "40px",
-                height: "40px",
-                borderRadius: "50%",
-                objectFit: "cover",
-              }}
-            />
-          ) : (
-            <div
-              style={{
-                width: "40px",
-                height: "40px",
-                borderRadius: "50%",
-                backgroundColor: "var(--color-gold)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "var(--color-black)",
-                fontWeight: "bold",
-                fontSize: "16px",
-              }}
-            >
-              {displayName?.charAt(0).toUpperCase() || "?"}
-            </div>
-          )}
-        </div>
-
-        {/* Activity Content */}
-        <div className="flex-grow-1">
-          <p className="mb-1 small">{renderActivityMessage()}</p>
-          <small className="text-muted">{getTimeAgo(activity.timestamp)}</small>
-        </div>
-      </div>
+      <p className="mb-1 small">{renderActivityMessage()}</p>
+      <small className="text-muted">{getTimeAgo(activity.timestamp)}</small>
 
       {showBorder && (
         <div

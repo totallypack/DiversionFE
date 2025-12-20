@@ -2,12 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMyFriends, searchUsers, removeFriend, addFriend } from "../managers/friendManager";
 import NavBar from "./NavBar";
+import FullWidthSection from "./common/FullWidthSection";
 import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
   Input,
   Button,
   Alert,
@@ -80,7 +76,6 @@ export default function Friends() {
     try {
       await addFriend(userId);
       await loadFriends();
-      // Refresh search results
       if (searchQuery.trim().length >= 2) {
         performSearch();
       }
@@ -91,119 +86,164 @@ export default function Friends() {
 
   if (loading) {
     return (
-      <>
+      <div style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "var(--color-purple)",
+      }}>
         <NavBar />
-        <Container className="mt-5 text-center">
-          <Spinner color="primary" />
+        <div className="text-center">
+          <Spinner color="dark" />
           <p className="mt-3">Loading friends...</p>
-        </Container>
-      </>
+        </div>
+      </div>
     );
   }
 
   return (
-    <>
+    <div style={{
+      marginBottom: "-20px",
+      minHeight: "calc(100vh + 100px)",
+      display: "flex",
+      flexDirection: "column"
+    }}>
       <NavBar />
-      <Container className="mt-5">
-        <Row className="justify-content-center">
-          <Col md={8}>
-            {error && <Alert color="danger">{error}</Alert>}
 
-            <Card className="mb-4">
-              <CardBody>
-                <h2 className="mb-4">Search Users</h2>
-                <Input
-                  type="text"
-                  placeholder="Search by username..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="mb-3"
-                />
-                {searching && <div className="text-center"><Spinner size="sm" /></div>}
-                {searchResults.length > 0 && (
-                  <ListGroup>
-                    {searchResults.map((user) => (
-                      <ListGroupItem
-                        key={user.userId}
-                        className="d-flex justify-content-between align-items-center"
-                      >
-                        <div
-                          style={{ cursor: "pointer", flex: 1 }}
-                          onClick={() => navigate(`/profile/${user.userId}`)}
-                        >
-                          <div>
-                            <strong>{user.displayName || user.username}</strong>
-                          </div>
-                          <div className="text-muted small">
-                            @{user.username}
-                            {user.city && user.state && ` • ${user.city}, ${user.state}`}
-                          </div>
-                        </div>
-                        {user.isFriend ? (
-                          <Button
-                            color="warning"
-                            outline
-                            size="sm"
-                            onClick={() => handleRemoveFriend(user.userId)}
-                          >
-                            Remove
-                          </Button>
-                        ) : (
-                          <Button
-                            color="success"
-                            size="sm"
-                            onClick={() => handleAddFriend(user.userId)}
-                          >
-                            Add Friend
-                          </Button>
-                        )}
-                      </ListGroupItem>
-                    ))}
-                  </ListGroup>
-                )}
-              </CardBody>
-            </Card>
+      {/* Header Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-light-grey)"
+        padding="130px 20px 60px"
+        minHeight="250px"
+        containerMaxWidth="900px"
+      >
+        <div className="text-center">
+          <h1 className="mb-3">Friends</h1>
+          <p className="lead mb-0">
+            Connect with people who share your interests
+          </p>
+        </div>
+      </FullWidthSection>
 
-            <Card>
-              <CardBody>
-                <h2 className="mb-4">My Friends ({friends.length})</h2>
-                {friends.length > 0 ? (
-                  <ListGroup>
-                    {friends.map((friendship) => (
-                      <ListGroupItem
-                        key={friendship.id}
-                        className="d-flex justify-content-between align-items-center"
-                      >
-                        <div
-                          style={{ cursor: "pointer", flex: 1 }}
-                          onClick={() => navigate(`/profile/${friendship.friendId}`)}
-                        >
-                          <div>
-                            <strong>{friendship.friendDisplayName || friendship.friendUsername}</strong>
-                          </div>
-                          <div className="text-muted small">@{friendship.friendUsername}</div>
-                        </div>
-                        <Button
-                          color="warning"
-                          outline
-                          size="sm"
-                          onClick={() => handleRemoveFriend(friendship.friendId)}
-                        >
-                          Remove
-                        </Button>
-                      </ListGroupItem>
-                    ))}
-                  </ListGroup>
-                ) : (
-                  <Alert color="info" fade={false}>
-                    You don't have any friends yet. Search for users above to add friends!
-                  </Alert>
-                )}
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
-    </>
+      {/* Search Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-purple)"
+        padding="80px 20px"
+        minHeight="300px"
+        containerMaxWidth="900px"
+      >
+        {error && <Alert color="danger" className="mb-4">{error}</Alert>}
+
+        <div
+          style={{
+            backgroundColor: "rgba(226, 226, 226, 0.6)",
+            padding: "40px",
+            borderRadius: "8px",
+          }}
+        >
+          <h3 className="mb-4">Search Users</h3>
+          <Input
+            type="text"
+            placeholder="Search by username..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="mb-3"
+          />
+          {searching && <div className="text-center"><Spinner size="sm" /></div>}
+          {searchResults.length > 0 && (
+            <ListGroup>
+              {searchResults.map((user) => (
+                <ListGroupItem
+                  key={user.userId}
+                  className="d-flex justify-content-between align-items-center"
+                >
+                  <div
+                    style={{ cursor: "pointer", flex: 1 }}
+                    onClick={() => navigate(`/profile/${user.userId}`)}
+                  >
+                    <div>
+                      <strong>{user.displayName || user.username}</strong>
+                    </div>
+                    <div className="text-muted small">
+                      @{user.username}
+                      {user.city && user.state && ` • ${user.city}, ${user.state}`}
+                    </div>
+                  </div>
+                  {user.isFriend ? (
+                    <Button
+                      color="warning"
+                      outline
+                      size="sm"
+                      onClick={() => handleRemoveFriend(user.userId)}
+                    >
+                      Remove
+                    </Button>
+                  ) : (
+                    <Button
+                      color="success"
+                      size="sm"
+                      onClick={() => handleAddFriend(user.userId)}
+                    >
+                      Add Friend
+                    </Button>
+                  )}
+                </ListGroupItem>
+              ))}
+            </ListGroup>
+          )}
+        </div>
+      </FullWidthSection>
+
+      {/* Friends List Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-light-green)"
+        padding="80px 20px 150px"
+        minHeight="400px"
+        containerMaxWidth="900px"
+      >
+        <div
+          style={{
+            backgroundColor: "rgba(226, 226, 226, 0.6)",
+            padding: "40px",
+            borderRadius: "8px",
+          }}
+        >
+          <h3 className="mb-4">My Friends ({friends.length})</h3>
+          {friends.length > 0 ? (
+            <ListGroup>
+              {friends.map((friendship) => (
+                <ListGroupItem
+                  key={friendship.id}
+                  className="d-flex justify-content-between align-items-center"
+                >
+                  <div
+                    style={{ cursor: "pointer", flex: 1 }}
+                    onClick={() => navigate(`/profile/${friendship.friendId}`)}
+                  >
+                    <div>
+                      <strong>{friendship.friendDisplayName || friendship.friendUsername}</strong>
+                    </div>
+                    <div className="text-muted small">@{friendship.friendUsername}</div>
+                  </div>
+                  <Button
+                    color="warning"
+                    outline
+                    size="sm"
+                    onClick={() => handleRemoveFriend(friendship.friendId)}
+                  >
+                    Remove
+                  </Button>
+                </ListGroupItem>
+              ))}
+            </ListGroup>
+          ) : (
+            <Alert color="info">
+              You don't have any friends yet. Search for users above to add friends!
+            </Alert>
+          )}
+        </div>
+      </FullWidthSection>
+    </div>
   );
 }

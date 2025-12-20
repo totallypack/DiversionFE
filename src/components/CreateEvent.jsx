@@ -2,33 +2,18 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createEvent } from "../managers/eventManager";
 import { getAllInterestsWithSubInterests } from "../managers/interestManager";
+import { US_STATES } from "../constants/locationConstants";
+import { validateEventForm } from "../utils/eventValidation";
 import NavBar from "./NavBar";
+import ErrorAlert from "./common/ErrorAlert";
+import FullWidthSection from "./common/FullWidthSection";
 import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
   Form,
   FormGroup,
   Label,
   Input,
   Button,
-  Alert,
 } from "reactstrap";
-
-const US_STATES = [
-  "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
-  "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho",
-  "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana",
-  "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota",
-  "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
-  "New Hampshire", "New Jersey", "New Mexico", "New York",
-  "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon",
-  "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
-  "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
-  "West Virginia", "Wisconsin", "Wyoming"
-];
 
 export default function CreateEvent() {
   const [title, setTitle] = useState("");
@@ -41,9 +26,9 @@ export default function CreateEvent() {
   const [state, setState] = useState("");
   const [meetingUrl, setMeetingUrl] = useState("");
   const [interestTagId, setInterestTagId] = useState("");
+  const [selectedInterestId, setSelectedInterestId] = useState("");
   const [requiresRsvp, setRequiresRsvp] = useState(false);
   const [interests, setInterests] = useState([]);
-  const [subInterests, setSubInterests] = useState([]);
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingInterests, setLoadingInterests] = useState(true);
@@ -57,15 +42,6 @@ export default function CreateEvent() {
     try {
       const data = await getAllInterestsWithSubInterests();
       setInterests(data);
-
-      // Flatten all subinterests for easier selection
-      const allSubInterests = data.flatMap((interest) =>
-        interest.subInterests.map((sub) => ({
-          ...sub,
-          interestName: interest.name,
-        }))
-      );
-      setSubInterests(allSubInterests);
       setLoadingInterests(false);
     } catch (error) {
       setErrors(["Failed to load interests. Please try again."]);
@@ -73,53 +49,34 @@ export default function CreateEvent() {
     }
   };
 
-  const validateForm = () => {
-    const newErrors = [];
-
-    if (!title.trim()) {
-      newErrors.push("Title is required");
-    }
-
-    if (!startDateTime) {
-      newErrors.push("Start date and time are required");
-    }
-
-    if (!endDateTime) {
-      newErrors.push("End date and time are required");
-    }
-
-    if (startDateTime && endDateTime && new Date(endDateTime) <= new Date(startDateTime)) {
-      newErrors.push("End date must be after start date");
-    }
-
-    if (startDateTime && new Date(startDateTime) <= new Date()) {
-      newErrors.push("Start date must be in the future");
-    }
-
-    if (!interestTagId) {
-      newErrors.push("Please select an interest tag");
-    }
-
-    if (eventType === "Online" && !meetingUrl.trim()) {
-      newErrors.push("Meeting URL is required for online events");
-    }
-
-    if (eventType === "InPerson" && !city.trim()) {
-      newErrors.push("City is required for in-person events");
-    }
-
-    if (eventType === "InPerson" && !state) {
-      newErrors.push("State is required for in-person events");
-    }
-
-    return newErrors;
+  const handleInterestChange = (e) => {
+    const newInterestId = e.target.value;
+    setSelectedInterestId(newInterestId);
+    setInterestTagId(""); // Reset subinterest selection when interest changes
   };
+
+  const getFilteredSubInterests = () => {
+    if (!selectedInterestId) return [];
+    const selectedInterest = interests.find((i) => i.id === selectedInterestId);
+    return selectedInterest?.subInterests || [];
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors([]);
 
-    const validationErrors = validateForm();
+    const validationErrors = validateEventForm({
+      title,
+      startDateTime,
+      endDateTime,
+      interestTagId,
+      eventType,
+      meetingUrl,
+      city,
+      state,
+    });
+
     if (validationErrors.length > 0) {
       setErrors(validationErrors);
       return;
@@ -157,31 +114,51 @@ export default function CreateEvent() {
   };
 
   return (
-    <>
+    <div style={{
+      marginBottom: "-20px",
+      minHeight: "calc(100vh + 100px)",
+      display: "flex",
+      flexDirection: "column"
+    }}>
       <NavBar />
-      <Container className="mt-5">
-        <Row className="justify-content-center">
-          <Col md={8} lg={6}>
-            <Card>
-              <CardBody>
-                <h2 className="text-center mb-4">Create New Event</h2>
 
-                {errors.length > 0 && (
-                  <Alert color="danger" fade={false}>
-                    <ul className="mb-0">
-                      {errors.map((error, index) => (
-                        <li key={index}>{error}</li>
-                      ))}
-                    </ul>
-                  </Alert>
-                )}
+      {/* Header Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-light-grey)"
+        padding="130px 20px 60px"
+        minHeight="250px"
+        containerMaxWidth="800px"
+      >
+        <div className="text-center">
+          <h1 className="mb-3">Create A New Event</h1>
+          <p className="lead mb-0">
+            Organize a gathering for your community
+          </p>
+        </div>
+      </FullWidthSection>
 
-                {loadingInterests ? (
-                  <div className="text-center">
-                    <p>Loading interests...</p>
-                  </div>
-                ) : (
-                  <Form onSubmit={handleSubmit}>
+      {/* Form Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-purple)"
+        padding="80px 20px 150px"
+        minHeight="600px"
+        containerMaxWidth="800px"
+      >
+        <div
+          style={{
+            backgroundColor: "rgba(226, 226, 226, 0.6)",
+            padding: "40px",
+            borderRadius: "8px",
+          }}
+        >
+          <ErrorAlert errors={errors} />
+
+          {loadingInterests ? (
+            <div className="text-center">
+              <p>Loading interests...</p>
+            </div>
+          ) : (
+            <Form onSubmit={handleSubmit}>
                     <FormGroup>
                       <Label for="title">
                         Event Title <span className="text-danger">*</span>
@@ -215,24 +192,46 @@ export default function CreateEvent() {
                     </FormGroup>
 
                     <FormGroup>
-                      <Label for="interestTag">
-                        Interest Tag <span className="text-danger">*</span>
+                      <Label for="interest">
+                        Interest Category <span className="text-danger">*</span>
                       </Label>
                       <Input
-                        id="interestTag"
+                        id="interest"
                         type="select"
-                        value={interestTagId}
-                        onChange={(e) => setInterestTagId(e.target.value)}
+                        value={selectedInterestId}
+                        onChange={handleInterestChange}
                         disabled={loading}
                       >
-                        <option value="">-- Select an interest --</option>
-                        {subInterests.map((sub) => (
-                          <option key={sub.id} value={sub.id}>
-                            {sub.interestName} - {sub.name}
+                        <option value="">-- Select a category --</option>
+                        {interests.map((interest) => (
+                          <option key={interest.id} value={interest.id}>
+                            {interest.name}
                           </option>
                         ))}
                       </Input>
                     </FormGroup>
+
+                    {selectedInterestId && (
+                      <FormGroup>
+                        <Label for="interestTag">
+                          Specific Interest <span className="text-danger">*</span>
+                        </Label>
+                        <Input
+                          id="interestTag"
+                          type="select"
+                          value={interestTagId}
+                          onChange={(e) => setInterestTagId(e.target.value)}
+                          disabled={loading}
+                        >
+                          <option value="">-- Select a specific interest --</option>
+                          {getFilteredSubInterests().map((sub) => (
+                            <option key={sub.id} value={sub.id}>
+                              {sub.name}
+                            </option>
+                          ))}
+                        </Input>
+                      </FormGroup>
+                    )}
 
                     <FormGroup>
                       <Label for="startDateTime">
@@ -362,7 +361,7 @@ export default function CreateEvent() {
                     </FormGroup>
 
                     <div className="d-grid gap-2 mt-4">
-                      <Button color="primary" type="submit" disabled={loading}>
+                      <Button color="secondary" type="submit" disabled={loading}>
                         {loading ? "Creating Event..." : "Create Event"}
                       </Button>
                       <Button
@@ -374,13 +373,10 @@ export default function CreateEvent() {
                         Cancel
                       </Button>
                     </div>
-                  </Form>
-                )}
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
-    </>
+            </Form>
+          )}
+        </div>
+      </FullWidthSection>
+    </div>
   );
 }
