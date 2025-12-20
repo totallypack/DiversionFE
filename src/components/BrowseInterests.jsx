@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { getAllInterestsWithSubInterests } from "../managers/interestManager";
 import { filterInterestsBySearchTerm } from "../utils/filterUtils";
 import NavBar from "./NavBar";
+import FullWidthSection from "./common/FullWidthSection";
+import HoverCard from "./common/HoverCard";
 import {
   Container,
   Row,
   Col,
-  Card,
-  CardBody,
   Alert,
   Spinner,
   Input,
@@ -60,154 +60,181 @@ export default function BrowseInterests() {
 
   if (loading) {
     return (
-      <>
+      <div style={{
+        marginTop: "180px",
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "var(--color-purple)",
+      }}>
         <NavBar />
-        <Container className="mt-5 text-center">
-          <Spinner color="primary" />
+        <div className="text-center">
+          <Spinner color="dark" />
           <p className="mt-3">Loading interests...</p>
-        </Container>
-      </>
+        </div>
+      </div>
     );
   }
 
   return (
-    <>
+    <div style={{
+      marginBottom: "-20px",
+      minHeight: "calc(100vh + 100px)",
+      display: "flex",
+      flexDirection: "column"
+    }}>
       <NavBar />
-      <Container className="mt-5">
-        <Row className="justify-content-center">
-          <Col md={10}>
-            <div className="mb-4">
-              <h2>Browse Interests</h2>
-              <p className="text-muted">
-                Explore all available interests and find new communities to join
-              </p>
-            </div>
 
-            <Card className="mb-4">
-              <CardBody>
-                <Row>
-                  <Col md={6}>
-                    <FormGroup>
-                      <Label for="search">Search Interests</Label>
-                      <Input
-                        id="search"
-                        type="text"
-                        placeholder="Search by name or description..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col md={6}>
-                    <FormGroup>
-                      <Label for="categoryJump">Quick Jump to Category</Label>
-                      <Input
-                        id="categoryJump"
-                        type="select"
-                        value={selectedCategory}
-                        onChange={handleCategoryChange}
-                      >
-                        <option value="">-- Select a category --</option>
-                        {interests.map((interest) => (
-                          <option key={interest.id} value={interest.id}>
-                            {interest.name}
-                          </option>
-                        ))}
-                      </Input>
-                    </FormGroup>
-                  </Col>
-                </Row>
-              </CardBody>
-            </Card>
+      {/* Header Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-light-grey)"
+        padding="130px 20px 60px"
+        minHeight="250px"
+        containerMaxWidth="1000px"
+      >
+        <div className="text-center">
+          <h1 className="mb-3">Browse Interests</h1>
+          <p className="lead mb-0">
+            Explore all available interests and find new communities to join
+          </p>
+        </div>
+      </FullWidthSection>
 
-            {error && <Alert color="danger" fade={false}>{error}</Alert>}
+      {/* Search Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-purple)"
+        padding="60px 20px"
+        minHeight="200px"
+        containerMaxWidth="1000px"
+      >
+        <div
+          style={{
+            backgroundColor: "rgba(226, 226, 226, 0.6)",
+            padding: "30px",
+            borderRadius: "8px",
+          }}
+        >
+          <Row>
+            <Col md={6}>
+              <FormGroup>
+                <Label for="search">Search Interests</Label>
+                <Input
+                  id="search"
+                  type="text"
+                  placeholder="Search by name or description..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </FormGroup>
+            </Col>
+            <Col md={6}>
+              <FormGroup>
+                <Label for="categoryJump">Quick Jump to Category</Label>
+                <Input
+                  id="categoryJump"
+                  type="select"
+                  value={selectedCategory}
+                  onChange={handleCategoryChange}
+                >
+                  <option value="">-- Select a category --</option>
+                  {interests.map((interest) => (
+                    <option key={interest.id} value={interest.id}>
+                      {interest.name}
+                    </option>
+                  ))}
+                </Input>
+              </FormGroup>
+            </Col>
+          </Row>
+        </div>
+      </FullWidthSection>
 
-            {filteredInterests.length === 0 ? (
-              <Alert color="info" fade={false}>
-                No interests found matching your search. Try different keywords.
-              </Alert>
-            ) : (
-              <Row className="g-4">
-                {filteredInterests.map((interest) => (
-                  <Col key={interest.id} xs={12}>
-                    <div
-                      ref={(el) => (interestRefs.current[interest.id] = el)}
-                      style={{ scrollMarginTop: "100px" }}
-                    >
-                      <Card>
-                    <CardBody>
-                      <div className="mb-3">
-                        <h4 className="mb-2">{interest.name}</h4>
-                        {interest.description && (
-                          <p className="text-muted">{interest.description}</p>
-                        )}
-                      </div>
+      {/* Interests Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-light-green)"
+        padding="80px 20px 150px"
+        minHeight="500px"
+        containerMaxWidth="1200px"
+      >
+        {error && <Alert color="danger" className="text-center">{error}</Alert>}
 
-                      {interest.subInterests && interest.subInterests.length > 0 ? (
-                        <div>
-                          <h6 className="mb-3 text-muted">
-                            {interest.subInterests.length} sub-interest
-                            {interest.subInterests.length !== 1 ? "s" : ""}
-                          </h6>
-                          <Row className="g-3">
-                            {interest.subInterests.map((subInterest) => (
-                              <Col key={subInterest.id} md={6} lg={4}>
-                                <Card
-                                  className="h-100 border"
-                                  style={{
-                                    cursor: "pointer",
-                                    transition: "all 0.2s",
-                                  }}
-                                  onClick={() =>
-                                    handleSubInterestClick(subInterest.id)
-                                  }
-                                  onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform =
-                                      "translateY(-2px)";
-                                    e.currentTarget.style.boxShadow =
-                                      "0 4px 8px rgba(0,0,0,0.1)";
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform =
-                                      "translateY(0)";
-                                    e.currentTarget.style.boxShadow = "none";
-                                  }}
-                                >
-                                  <CardBody className="p-3">
-                                    <h6 className="mb-1">
-                                      {subInterest.name}
-                                    </h6>
-                                    {subInterest.description && (
-                                      <p className="text-muted small mb-0">
-                                        {subInterest.description.length > 100
-                                          ? `${subInterest.description.substring(
-                                              0,
-                                              100
-                                            )}...`
-                                          : subInterest.description}
-                                      </p>
-                                    )}
-                                  </CardBody>
-                                </Card>
-                              </Col>
-                            ))}
-                          </Row>
-                        </div>
-                      ) : (
-                        <Alert color="light" className="mb-0" fade={false}>
-                          No sub-interests available for this category yet.
-                        </Alert>
+        {filteredInterests.length === 0 ? (
+          <div className="text-center">
+            <p className="text-muted">
+              No interests found matching your search. Try different keywords.
+            </p>
+          </div>
+        ) : (
+          <Row className="g-4">
+            {filteredInterests.map((interest, index) => (
+              <Col key={interest.id} xs={12}>
+                <div
+                  ref={(el) => (interestRefs.current[interest.id] = el)}
+                  style={{ scrollMarginTop: "100px" }}
+                >
+                  <div
+                    style={{
+                      backgroundColor: index % 2 === 0 ? "rgba(226, 226, 226, 0.7)" : "rgba(196, 186, 255, 0.3)",
+                      padding: "30px",
+                      borderRadius: "8px",
+                    }}
+                  >
+                    <div className="mb-3">
+                      <h4 className="mb-2">{interest.name}</h4>
+                      {interest.description && (
+                        <p className="text-muted">{interest.description}</p>
                       )}
-                    </CardBody>
-                  </Card>
                     </div>
-                  </Col>
-                ))}
-            </Row>
-            )}
-          </Col>
-        </Row>
-      </Container>
-    </>
+
+                    {interest.subInterests && interest.subInterests.length > 0 ? (
+                      <div>
+                        <h6 className="mb-3 text-muted">
+                          {interest.subInterests.length} sub-interest
+                          {interest.subInterests.length !== 1 ? "s" : ""}
+                        </h6>
+                        <Row className="g-3">
+                          {interest.subInterests.map((subInterest) => (
+                            <Col key={subInterest.id} md={6} lg={4}>
+                              <HoverCard
+                                backgroundColor="rgba(255, 255, 255, 0.8)"
+                                borderWidth="2px"
+                                hoverBorderColor="var(--color-cyan)"
+                                height="100%"
+                                onClick={() =>
+                                  handleSubInterestClick(subInterest.id)
+                                }
+                              >
+                                <h6 className="mb-1">
+                                  {subInterest.name}
+                                </h6>
+                                {subInterest.description && (
+                                  <p className="text-muted small mb-0">
+                                    {subInterest.description.length > 100
+                                      ? `${subInterest.description.substring(
+                                          0,
+                                          100
+                                        )}...`
+                                      : subInterest.description}
+                                  </p>
+                                )}
+                              </HoverCard>
+                            </Col>
+                          ))}
+                        </Row>
+                      </div>
+                    ) : (
+                      <p className="text-muted mb-0">
+                        No sub-interests available for this category yet.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </Col>
+            ))}
+          </Row>
+        )}
+      </FullWidthSection>
+    </div>
   );
 }

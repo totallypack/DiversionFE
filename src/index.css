@@ -21,22 +21,25 @@
   --font-size-3xl: 1.875rem;   /* 30px */
   --font-size-4xl: 2.25rem;    /* 36px */
 
-  /* Main Colors */
+  /* Main */
   --color-light-grey: rgb(226, 226, 226);
   --color-light-green: rgb(208, 238, 168);
   --color-purple: rgb(196, 186, 255);
 
+  /* Nav Bar */
+  --color-light-grey-rgb: 226, 226, 226;
+
   /* Accent Colors */
-  --color-cyan: rgb(51, 223, 223);
+  --color-cyan: rgb(89, 202, 202);
   --color-gold: rgb(185, 142, 1);
   --color-coral: rgb(255, 118, 118);
   --color-hot-pink: rgb(196, 21, 212);
 
-  /* Neutral Colors */
+  /* Neutral */
   --color-black: rgb(0, 0, 0);
   --color-white: rgb(255, 255, 255);
 
-  /* Hover Colors */
+  /* Hover */
   --color-purple-hover: rgb(176, 161, 255);
   --color-light-grey-hover: rgb(208, 208, 208);
   --color-light-green-hover: rgb(229, 247, 208);
@@ -44,7 +47,7 @@
   --color-gold-hover: rgb(160, 125, 1);
   --color-coral-hover: rgb(255, 94, 94);
 
-  /* Text Colors */
+  /* Text */
   --color-text-muted: rgb(102, 102, 102);
 
   /* Bootstrap Color Overrides */

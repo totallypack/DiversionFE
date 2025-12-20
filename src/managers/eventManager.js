@@ -1,136 +1,22 @@
+import { apiGet, apiPost, apiPut, apiDelete } from "../utils/apiClient";
+
 const apiUrl = "/api/events";
 
-export const getAllEvents = async () => {
-  const res = await fetch(apiUrl, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
+export const getAllEvents = () => apiGet(apiUrl);
 
-  if (!res.ok) {
-    return res.json().then((error) => {
-      throw error;
-    });
-  }
-  return await res.json();
-};
+export const getEventById = (id) => apiGet(`${apiUrl}/${id}`);
 
-export const getEventById = async (id) => {
-  const res = await fetch(`${apiUrl}/${id}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
+export const getEventsByInterest = (interestTagId) =>
+  apiGet(`${apiUrl}/interest/${interestTagId}`);
 
-  if (!res.ok) {
-    return res.json().then((error) => {
-      throw error;
-    });
-  }
-  return await res.json();
-};
+export const getMyEvents = () => apiGet(`${apiUrl}/my`);
 
-export const getEventsByInterest = async (interestTagId) => {
-  const res = await fetch(`${apiUrl}/interest/${interestTagId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
+export const getUserEvents = (userId) => apiGet(`${apiUrl}/user/${userId}`);
 
-  if (!res.ok) {
-    return res.json().then((error) => {
-      throw error;
-    });
-  }
-  return await res.json();
-};
+export const getRsvpdEvents = () => apiGet(`${apiUrl}/rsvpd`);
 
-export const getMyEvents = async () => {
-  const res = await fetch(`${apiUrl}/my`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
+export const createEvent = (eventData) => apiPost(apiUrl, eventData);
 
-  if (!res.ok) {
-    return res.json().then((error) => {
-      throw error;
-    });
-  }
-  return await res.json();
-};
+export const updateEvent = (id, eventData) => apiPut(`${apiUrl}/${id}`, eventData);
 
-export const getRsvpdEvents = async () => {
-  const res = await fetch(`${apiUrl}/rsvpd`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-  });
-
-  if (!res.ok) {
-    return res.json().then((error) => {
-      throw error;
-    });
-  }
-  return await res.json();
-};
-
-export const createEvent = async (eventData) => {
-  const res = await fetch(apiUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify(eventData),
-  });
-
-  if (!res.ok) {
-    return res.json().then((error) => {
-      throw error;
-    });
-  }
-  return await res.json();
-};
-
-export const updateEvent = async (id, eventData) => {
-  const res = await fetch(`${apiUrl}/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify(eventData),
-  });
-
-  if (!res.ok) {
-    return res.json().then((error) => {
-      throw error;
-    });
-  }
-  return;
-};
-
-export const deleteEvent = async (id) => {
-  const res = await fetch(`${apiUrl}/${id}`, {
-    method: "DELETE",
-    credentials: "include",
-  });
-
-  if (!res.ok) {
-    return res.json().then((error) => {
-      throw error;
-    });
-  }
-  return;
-};
+export const deleteEvent = (id) => apiDelete(`${apiUrl}/${id}`);

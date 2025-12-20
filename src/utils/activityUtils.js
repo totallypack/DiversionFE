@@ -1,8 +1,3 @@
-/**
- * Gets the RSVP text based on status
- * @param {string} status - RSVP status (Going, Maybe, Not Going)
- * @returns {string} Text description of RSVP action
- */
 export const getRsvpText = (status) => {
   switch (status) {
     case "Going":
@@ -16,11 +11,6 @@ export const getRsvpText = (status) => {
   }
 };
 
-/**
- * Gets the badge color for RSVP status
- * @param {string} status - RSVP status (Going, Maybe, Not Going)
- * @returns {string} Bootstrap color name
- */
 export const getRsvpBadgeColor = (status) => {
   switch (status) {
     case "Going":
@@ -34,11 +24,6 @@ export const getRsvpBadgeColor = (status) => {
   }
 };
 
-/**
- * Gets display name from activity user data
- * @param {object} activity - Activity object
- * @returns {string} Display name or username
- */
 export const getActivityDisplayName = (activity) => {
   return activity.displayName || activity.username || "User";
 };

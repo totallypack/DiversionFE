@@ -7,12 +7,9 @@ import {
   removeInterestBySubInterestId,
 } from "../managers/userInterestManager";
 import NavBar from "./NavBar";
+import FullWidthSection from "./common/FullWidthSection";
 import {
   Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
   Alert,
   Spinner,
   Button,
@@ -91,107 +88,144 @@ export default function SubInterestDetail() {
 
   if (loading) {
     return (
-      <>
+      <div style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "var(--color-purple)",
+      }}>
         <NavBar />
-        <Container className="mt-5 text-center">
-          <Spinner color="primary" />
+        <div className="text-center">
+          <Spinner color="dark" />
           <p className="mt-3">Loading...</p>
-        </Container>
-      </>
+        </div>
+      </div>
     );
   }
 
   if (error || !subInterest) {
     return (
-      <>
+      <div style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: "var(--color-light-grey)",
+      }}>
         <NavBar />
         <Container className="mt-5">
-          <Alert color="danger">{error || "SubInterest not found"}</Alert>
-          <Button color="primary" onClick={() => navigate(-1)}>
-            Back
-          </Button>
+          <Alert color="danger" className="text-center">{error || "SubInterest not found"}</Alert>
+          <div className="text-center">
+            <Button color="dark" onClick={() => navigate(-1)}>
+              Back
+            </Button>
+          </div>
         </Container>
-      </>
+      </div>
     );
   }
 
   return (
-    <>
+    <div style={{
+      marginBottom: "-20px",
+      minHeight: "calc(100vh + 100px)",
+      display: "flex",
+      flexDirection: "column"
+    }}>
       <NavBar />
-      <Container className="mt-5">
-      <Row className="justify-content-center">
-        <Col md={10} lg={8}>
-          <div className="mb-4">
+
+      {/* Header Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-light-grey)"
+        padding="130px 20px 60px"
+        minHeight="300px"
+        containerMaxWidth="900px"
+      >
+        <div className="text-center">
+          <div className="mb-3">
             <span className="text-muted">{subInterest.interest.name}</span>
             {" > "}
             <span className="fw-bold">{subInterest.name}</span>
           </div>
+          <h1 className="mb-3">{subInterest.name}</h1>
+          <Badge color="info" style={{ fontSize: "0.9rem" }}>
+            {subInterest.interest.name}
+          </Badge>
 
-          {successMessage && <Alert color="success" fade={false}>{successMessage}</Alert>}
-          {error && <Alert color="danger" fade={false}>{error}</Alert>}
+          <div className="mt-4">
+            {isInMyInterests ? (
+              <Button
+                color="secondary"
+                outline
+                size="lg"
+                onClick={handleRemoveFromInterests}
+                disabled={actionLoading}
+              >
+                {actionLoading ? "Removing..." : "Remove from My Interests"}
+              </Button>
+            ) : (
+              <Button
+                color="dark"
+                size="lg"
+                onClick={handleAddToInterests}
+                disabled={actionLoading}
+              >
+                {actionLoading ? "Adding..." : "Add to My Interests"}
+              </Button>
+            )}
+          </div>
+        </div>
+      </FullWidthSection>
 
-          <Card className="mb-4">
-            <CardBody>
-              <div className="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                  <h2 className="mb-2">{subInterest.name}</h2>
-                  <Badge color="info" className="mb-3">
-                    {subInterest.interest.name}
-                  </Badge>
-                </div>
-                <div>
-                  {isInMyInterests ? (
-                    <Button
-                      color="danger"
-                      outline
-                      onClick={handleRemoveFromInterests}
-                      disabled={actionLoading}
-                    >
-                      {actionLoading ? "Removing..." : "Remove from My Interests"}
-                    </Button>
-                  ) : (
-                    <Button
-                      color="primary"
-                      onClick={handleAddToInterests}
-                      disabled={actionLoading}
-                    >
-                      {actionLoading ? "Adding..." : "Add to My Interests"}
-                    </Button>
-                  )}
-                </div>
-              </div>
+      {/* About Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-purple)"
+        padding="80px 20px"
+        minHeight="300px"
+        containerMaxWidth="900px"
+      >
+        {successMessage && <Alert color="success" className="text-center mb-4">{successMessage}</Alert>}
 
-              {subInterest.description ? (
-                <div>
-                  <h5 className="mb-3">About</h5>
-                  <p className="text-muted">{subInterest.description}</p>
-                </div>
-              ) : (
-                <p className="text-muted">
-                  No description available for this interest yet.
-                </p>
-              )}
-            </CardBody>
-          </Card>
+        <div
+          style={{
+            backgroundColor: "rgba(226, 226, 226, 0.6)",
+            padding: "40px",
+            borderRadius: "8px",
+          }}
+        >
+          <h4 className="mb-3">About</h4>
+          {subInterest.description ? (
+            <p className="text-muted mb-0">{subInterest.description}</p>
+          ) : (
+            <p className="text-muted mb-0">
+              No description available for this interest yet.
+            </p>
+          )}
+        </div>
+      </FullWidthSection>
 
-          <Card>
-            <CardBody>
-              <h5 className="mb-3">Groups & Communities</h5>
-              <Alert color="info" className="mb-0">
-                <div className="text-center py-4">
-                  <h6>Coming Soon!</h6>
-                  <p className="mb-0">
-                    Groups and communities for this interest will be available
-                    soon. Check back later to connect with others who share this
-                    interest.
-                  </p>
-                </div>
-              </Alert>
-            </CardBody>
-          </Card>
-
-          {/* Action Buttons */}
-          <div className="mt-4 text-center">
+      {/* Communities Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-light-green)"
+        padding="80px 20px 150px"
+        minHeight="300px"
+        containerMaxWidth="900px"
+      >
+        <div
+          style={{
+            backgroundColor: "rgba(226, 226, 226, 0.6)",
+            padding: "40px",
+            borderRadius: "8px",
+          }}
+        >
+          <h4 className="mb-3">Groups & Communities</h4>
+          <div className="text-center py-4">
+            <h5>Coming Soon!</h5>
+            <p className="mb-3 text-muted">
+              Groups and communities for this interest will be available
+              soon. Check back later to connect with others who share this
+              interest.
+            </p>
             <Button
               color="secondary"
               outline
@@ -200,9 +234,8 @@ export default function SubInterestDetail() {
               Back
             </Button>
           </div>
-        </Col>
-      </Row>
-    </Container>
-    </>
+        </div>
+      </FullWidthSection>
+    </div>
   );
 }

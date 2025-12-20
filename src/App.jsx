@@ -2,7 +2,7 @@
   import "./App.css";
   import Home from "./components/Home";
   import Login from "./components/Login";
-  import Register from "./components/Register";
+  import SignUp from "./components/SignUp";
   import ProfileSetup from "./components/ProfileSetup";
   import Dashboard from "./components/Dashboard";
   import InterestSelection from "./components/InterestSelection";
@@ -21,7 +21,7 @@
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route path="/profile" element={<ProfileSetup />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/select-interests" element={<InterestSelection />} />
@@ -29,7 +29,6 @@
           <Route path="/browse-interests" element={<BrowseInterests />} />
           <Route path="/subinterest/:id" element={<SubInterestDetail />} />
           <Route path="/my-profile" element={<ProfileView />} />
-          <Route path="/my-profile-view" element={<ProfileView />} />
           <Route path="/profile/:userId" element={<ProfileView />} />
           <Route path="/friends" element={<Friends />} />
           <Route path="/events/create" element={<CreateEvent />} />

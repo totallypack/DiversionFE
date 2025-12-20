@@ -3,12 +3,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { getAllInterests } from "../managers/interestManager";
 import { getMyInterests } from "../managers/userInterestManager";
 import {
-  Container,
   Alert,
   Spinner,
   Button,
   Badge,
 } from "reactstrap";
+import FullWidthSection from "./common/FullWidthSection";
 
 export default function InterestSelection() {
   const [interests, setInterests] = useState([]);
@@ -49,7 +49,6 @@ export default function InterestSelection() {
       const myInterests = await getMyInterests();
       setMyInterestsCount(myInterests.length);
     } catch (err) {
-      //user may not have any interests yet
       setMyInterestsCount(0);
     }
   };
@@ -88,22 +87,14 @@ export default function InterestSelection() {
       display: "flex",
       flexDirection: "column"
     }}>
-      {/* Header Section - Light Green */}
-      <section
-        style={{
-          backgroundColor: "var(--color-light-green)",
-          width: "100vw",
-          margin: 0,
-          padding: "130px 20px 60px",
-          minHeight: "250px",
-          position: "relative",
-          left: "50%",
-          right: "50%",
-          marginLeft: "-50vw",
-          marginRight: "-50vw",
-        }}
+      {/* Header Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-light-grey)"
+        padding="130px 20px 60px"
+        minHeight="250px"
+        containerMaxWidth="800px"
       >
-        <Container style={{ maxWidth: "800px", textAlign: "center" }}>
+        <div style={{ textAlign: "center" }}>
           <h1 className="mb-3">What are you interested in?</h1>
           <p className="lead mb-0">
             Select a category to explore specific interests
@@ -115,90 +106,78 @@ export default function InterestSelection() {
               </Badge>
             </div>
           )}
-        </Container>
-      </section>
+        </div>
+      </FullWidthSection>
 
-      {/* Interests Grid Section - Purple */}
-      <section
-        style={{
-          backgroundColor: "var(--color-purple)",
-          width: "100vw",
-          margin: 0,
-          padding: "80px 20px",
-          paddingBottom: "150px",
-          minHeight: "500px",
-          position: "relative",
-          left: "50%",
-          right: "50%",
-          marginLeft: "-50vw",
-          marginRight: "-50vw",
-          flex: 1,
-        }}
+      {/* Interests Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-purple)"
+        padding="80px 20px 150px"
+        minHeight="500px"
+        containerMaxWidth="1200px"
       >
-        <Container style={{ maxWidth: "1200px" }}>
-          {successMessage && <Alert color="success" className="text-center">{successMessage}</Alert>}
-          {error && <Alert color="danger" className="text-center">{error}</Alert>}
+        {successMessage && <Alert color="success" className="text-center">{successMessage}</Alert>}
+        {error && <Alert color="danger" className="text-center">{error}</Alert>}
 
-          {myInterestsCount > 0 && (
-            <div className="text-center mb-5">
-              <Button
-                color="dark"
-                size="lg"
-                onClick={handleDoneSelecting}
-              >
-                Done Selecting - Go to Profile
-              </Button>
-            </div>
-          )}
-
-          <div className="row g-4">
-            {interests.map((interest) => (
-              <div key={interest.id} className="col-md-6 col-lg-4">
-                <div
-                  style={{
-                    backgroundColor: "rgba(226, 226, 226, 0.6)",
-                    padding: "30px",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    transition: "all 0.2s",
-                    height: "100%",
-                    textAlign: "center",
-                    border: "2px solid transparent",
-                  }}
-                  onClick={() => handleInterestClick(interest.id)}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-3px)";
-                    e.currentTarget.style.boxShadow = "0 6px 12px rgba(0,0,0,0.15)";
-                    e.currentTarget.style.borderColor = "var(--color-cyan)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "none";
-                    e.currentTarget.style.borderColor = "transparent";
-                  }}
-                >
-                  <h4 className="mb-3">{interest.name}</h4>
-                  <p className="text-muted mb-0">
-                    {interest.description}
-                  </p>
-                </div>
-              </div>
-            ))}
+        {myInterestsCount > 0 && (
+          <div className="text-center mb-5">
+            <Button
+              color="dark"
+              size="lg"
+              onClick={handleDoneSelecting}
+            >
+              Done Selecting - Go to Profile
+            </Button>
           </div>
+        )}
 
-          {myInterestsCount > 0 && (
-            <div className="text-center mt-5">
-              <Button
-                color="dark"
-                size="lg"
-                onClick={handleDoneSelecting}
+        <div className="row g-4">
+          {interests.map((interest) => (
+            <div key={interest.id} className="col-md-6 col-lg-4">
+              <div
+                style={{
+                  backgroundColor: "rgba(226, 226, 226, 0.6)",
+                  padding: "30px",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                  height: "100%",
+                  textAlign: "center",
+                  border: "2px solid transparent",
+                }}
+                onClick={() => handleInterestClick(interest.id)}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-3px)";
+                  e.currentTarget.style.boxShadow = "0 6px 12px rgba(0,0,0,0.15)";
+                  e.currentTarget.style.borderColor = "var(--color-cyan)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.borderColor = "transparent";
+                }}
               >
-                Done Selecting - Go to Profile
-              </Button>
+                <h4 className="mb-3">{interest.name}</h4>
+                <p className="text-muted mb-0">
+                  {interest.description}
+                </p>
+              </div>
             </div>
-          )}
-        </Container>
-      </section>
+          ))}
+        </div>
+
+        {myInterestsCount > 0 && (
+          <div className="text-center mt-5">
+            <Button
+              color="dark"
+              size="lg"
+              onClick={handleDoneSelecting}
+            >
+              Done Selecting - Go to Profile
+            </Button>
+          </div>
+        )}
+      </FullWidthSection>
     </div>
   );
 }

@@ -1,8 +1,3 @@
-/**
- * Transforms SubInterestWithInterestDto to UserInterestDto structure
- * @param {Array} interests - Array of SubInterestWithInterestDto objects
- * @returns {Array} Array of transformed UserInterestDto objects
- */
 export const transformInterestsForDisplay = (interests) => {
   if (!interests || !Array.isArray(interests)) return [];
 
@@ -19,11 +14,6 @@ export const transformInterestsForDisplay = (interests) => {
   }));
 };
 
-/**
- * Sorts events by start date time
- * @param {Array} events - Array of event objects
- * @returns {Array} Sorted events array
- */
 export const sortEventsByDate = (events) => {
   if (!events || !Array.isArray(events)) return [];
 

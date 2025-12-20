@@ -1,9 +1,3 @@
-/**
- * Filters interests and their sub-interests based on a search term
- * @param {Array} interests - Array of interest objects with subInterests
- * @param {string} searchTerm - Search term to filter by
- * @returns {Array} Filtered interests array
- */
 export const filterInterestsBySearchTerm = (interests, searchTerm) => {
   if (!searchTerm || searchTerm.trim() === "") return interests;
 
