@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation, useParams } from "react-router-dom";
-import { getMyProfile, getUserProfile } from "../managers/profileManager";
-import { getMyInterests } from "../managers/userInterestManager";
-import { getMyEvents, getRsvpdEvents, getUserEvents } from "../managers/eventManager";
-import { checkFriendship, addFriend, removeFriend } from "../managers/friendManager";
-import { transformInterestsForDisplay } from "../utils/transformUtils";
-import NavBar from "./NavBar";
-import EventCard from "./EventCard";
-import FullWidthSection from "./common/FullWidthSection";
+import { getMyProfile, getUserProfile } from "../../managers/profileManager";
+import { getMyInterests } from "../../managers/userInterestManager";
+import { getMyEvents, getRsvpdEvents, getUserEvents } from "../../managers/eventManager";
+import { checkFriendship, addFriend, removeFriend } from "../../managers/friendManager";
+import { transformInterestsForDisplay } from "../../utils/transformUtils";
+import NavBar from "../NavBar";
+import EventCard from "../events/EventCard";
+import FullWidthSection from "../common/FullWidthSection";
 import {
   Row,
   Col,
