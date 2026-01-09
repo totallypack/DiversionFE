@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getInterestById } from "../managers/interestManager";
-import { addInterest } from "../managers/userInterestManager";
-import FullWidthSection from "./common/FullWidthSection";
+import { getInterestById } from "../../managers/interestManager";
+import { addInterest } from "../../managers/userInterestManager";
+import FullWidthSection from "../common/FullWidthSection";
 import {
   Button,
   Alert,

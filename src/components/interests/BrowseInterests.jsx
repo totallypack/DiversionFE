@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllInterestsWithSubInterests } from "../managers/interestManager";
-import { filterInterestsBySearchTerm } from "../utils/filterUtils";
-import NavBar from "./NavBar";
-import FullWidthSection from "./common/FullWidthSection";
-import HoverCard from "./common/HoverCard";
+import { getAllInterestsWithSubInterests } from "../../managers/interestManager";
+import { filterInterestsBySearchTerm } from "../../utils/filterUtils";
+import NavBar from "../NavBar";
+import FullWidthSection from "../common/FullWidthSection";
+import HoverCard from "../common/HoverCard";
 import {
   Container,
   Row,

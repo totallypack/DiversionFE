@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { getAllInterests } from "../managers/interestManager";
-import { getMyInterests } from "../managers/userInterestManager";
+import { getAllInterests } from "../../managers/interestManager";
+import { getMyInterests } from "../../managers/userInterestManager";
 import {
   Alert,
   Spinner,
   Button,
   Badge,
 } from "reactstrap";
-import FullWidthSection from "./common/FullWidthSection";
+import FullWidthSection from "../common/FullWidthSection";
 
 export default function InterestSelection() {
   const [interests, setInterests] = useState([]);

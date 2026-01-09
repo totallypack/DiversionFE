@@ -1,6 +1,6 @@
 import { Badge } from "reactstrap";
-import { formatDate, formatTime } from "../utils/dateUtils";
-import HoverCard from "./common/HoverCard";
+import { formatDate, formatTime } from "../../utils/dateUtils";
+import HoverCard from "../common/HoverCard";
 
 export default function EventCard({ event, onClick, showRsvpStatus = false }) {
   const getRsvpBadgeColor = (status) => {

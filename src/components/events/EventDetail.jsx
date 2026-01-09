@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getEventById, deleteEvent } from "../managers/eventManager";
-import { getMyProfile } from "../managers/profileManager";
-import { getMyAttendanceForEvent, rsvpToEvent, updateRsvp, deleteRsvp } from "../managers/eventAttendeeManager";
-import { formatDateTime } from "../utils/dateUtils";
-import NavBar from "./NavBar";
-import RsvpButtonGroup from "./RsvpButtonGroup";
-import FullWidthSection from "./common/FullWidthSection";
+import { getEventById, deleteEvent } from "../../managers/eventManager";
+import { getMyProfile } from "../../managers/profileManager";
+import { getMyAttendanceForEvent, rsvpToEvent, updateRsvp, deleteRsvp } from "../../managers/eventAttendeeManager";
+import { formatDateTime } from "../../utils/dateUtils";
+import NavBar from "../NavBar";
+import RsvpButtonGroup from "../RsvpButtonGroup";
+import FullWidthSection from "../common/FullWidthSection";
 import {
   Container,
   Alert,

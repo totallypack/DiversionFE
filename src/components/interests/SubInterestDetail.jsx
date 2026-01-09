@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getSubInterestById } from "../managers/interestManager";
+import { getSubInterestById } from "../../managers/interestManager";
 import {
   getMyInterests,
   addInterest,
   removeInterestBySubInterestId,
-} from "../managers/userInterestManager";
-import NavBar from "./NavBar";
-import FullWidthSection from "./common/FullWidthSection";
+} from "../../managers/userInterestManager";
+import NavBar from "../NavBar";
+import FullWidthSection from "../common/FullWidthSection";
 import {
   Container,
   Alert,

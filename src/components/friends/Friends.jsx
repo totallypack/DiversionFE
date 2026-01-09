@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMyFriends, searchUsers, removeFriend, addFriend } from "../managers/friendManager";
-import NavBar from "./NavBar";
-import FullWidthSection from "./common/FullWidthSection";
+import { getMyFriends, searchUsers, removeFriend, addFriend } from "../../managers/friendManager";
+import NavBar from "../NavBar";
+import FullWidthSection from "../common/FullWidthSection";
 import {
   Input,
   Button,

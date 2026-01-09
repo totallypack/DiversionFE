@@ -3,17 +3,17 @@
   import Home from "./components/Home";
   import Login from "./components/Login";
   import SignUp from "./components/SignUp";
-  import ProfileSetup from "./components/ProfileSetup";
+  import ProfileSetup from "./components/profiles/ProfileSetup";
   import Dashboard from "./components/Dashboard";
-  import InterestSelection from "./components/InterestSelection";
-  import SubInterestSelection from "./components/SubInterestSelection";
-  import SubInterestDetail from "./components/SubInterestDetail";
-  import BrowseInterests from "./components/BrowseInterests";
-  import ProfileView from "./components/ProfileView";
-  import CreateEvent from "./components/CreateEvent";
-  import EditEvent from "./components/EditEvent";
-  import EventDetail from "./components/EventDetail";
-  import Friends from "./components/Friends";
+  import InterestSelection from "./components/interests/InterestSelection";
+  import SubInterestSelection from "./components/interests/SubInterestSelection";
+  import SubInterestDetail from "./components/interests/SubInterestDetail";
+  import BrowseInterests from "./components/interests/BrowseInterests";
+  import ProfileView from "./components/profiles/ProfileView";
+  import CreateEvent from "./components/events/CreateEvent";
+  import EditEvent from "./components/events/EditEvent";
+  import EventDetail from "./components/events/EventDetail";
+  import Friends from "./components/friends/Friends";
 
   function App() {
     return (

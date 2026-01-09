@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { createProfile, updateProfile, getMyProfile } from "../managers/profileManager";
-import { US_STATES } from "../constants/locationConstants";
-import ErrorAlert from "./common/ErrorAlert";
-import NavBar from "./NavBar";
-import FullWidthSection from "./common/FullWidthSection";
+import { createProfile, updateProfile, getMyProfile } from "../../managers/profileManager";
+import { US_STATES } from "../../constants/locationConstants";
+import ErrorAlert from "../common/ErrorAlert";
+import NavBar from "../NavBar";
+import FullWidthSection from "../common/FullWidthSection";
 import {
   Form,
   FormGroup,
