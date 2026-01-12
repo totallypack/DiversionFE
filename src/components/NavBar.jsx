@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getMyProfile } from "../managers/profileManager";
+import { getReceivedRequests } from "../managers/friendManager";
 import {
   Navbar,
   NavbarBrand,
@@ -10,7 +11,8 @@ import {
   Dropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
+  Badge
 } from "reactstrap";
 import "./NavBar.css";
 
@@ -21,11 +23,17 @@ export default function NavBar() {
   const [navbarOpacity, setNavbarOpacity] = useState(1);
   const [profile, setProfile] = useState(null);
   const [imageError, setImageError] = useState(false);
+  const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
 
   const toggle = () => setDropdownOpen(prevState => !prevState);
 
   useEffect(() => {
     loadProfile();
+    loadPendingRequests();
+
+    // Poll for new requests every 30 seconds
+    const interval = setInterval(loadPendingRequests, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const loadProfile = async () => {
@@ -34,6 +42,15 @@ export default function NavBar() {
       setProfile(profileData);
     } catch (err) {
       console.error("Failed to load profile:", err);
+    }
+  };
+
+  const loadPendingRequests = async () => {
+    try {
+      const requests = await getReceivedRequests();
+      setPendingRequestsCount(requests.length);
+    } catch (err) {
+      console.error("Failed to load pending requests:", err);
     }
   };
 
@@ -78,8 +95,27 @@ export default function NavBar() {
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink tag={Link} to="/friends">
+          <NavLink tag={Link} to="/friends" style={{ position: "relative" }}>
             Friends
+            {pendingRequestsCount > 0 && (
+              <Badge
+                color="danger"
+                pill
+                style={{
+                  position: "absolute",
+                  top: "8px",
+                  right: "-8px",
+                  fontSize: "0.7rem",
+                  minWidth: "18px",
+                  height: "18px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                {pendingRequestsCount}
+              </Badge>
+            )}
           </NavLink>
         </NavItem>
         <NavItem>
