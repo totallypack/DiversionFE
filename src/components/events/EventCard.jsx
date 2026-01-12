@@ -44,7 +44,10 @@ export default function EventCard({ event, onClick, showRsvpStatus = false }) {
             {event.eventType === "Online" ? "Online" : "In-Person"}
           </Badge>
           {event.interestTagName && (
-            <Badge color="info">{event.interestTagName}</Badge>
+            <Badge color="info" className="me-1">{event.interestTagName}</Badge>
+          )}
+          {event.ticketPrice && (
+            <Badge color="warning">${event.ticketPrice.toFixed(2)}</Badge>
           )}
         </div>
 

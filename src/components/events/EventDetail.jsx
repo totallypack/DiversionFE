@@ -255,6 +255,37 @@ export default function EventDetail() {
                 </span>
               </div>
             )}
+
+            {event.ticketPrice && (
+              <div className="mb-2">
+                <strong>Ticket Price:</strong>{" "}
+                <span className="text-muted">
+                  ${event.ticketPrice.toFixed(2)}
+                </span>
+              </div>
+            )}
+
+            {event.maxAttendees && (
+              <div className="mb-2">
+                <strong>Capacity:</strong>{" "}
+                <span className="text-muted">
+                  {event.attendeeCount} / {event.maxAttendees} spots filled
+                </span>
+              </div>
+            )}
+
+            {(event.minAge || event.maxAge) && (
+              <div className="mb-2">
+                <strong>Age Range:</strong>{" "}
+                <span className="text-muted">
+                  {event.minAge && event.maxAge
+                    ? `${event.minAge}-${event.maxAge} years`
+                    : event.minAge
+                    ? `${event.minAge}+ years`
+                    : `Up to ${event.maxAge} years`}
+                </span>
+              </div>
+            )}
           </div>
 
           {event.attendees && event.attendees.length > 0 && (

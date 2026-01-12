@@ -30,6 +30,10 @@ export default function EventForm({ mode = "create", eventId = null }) {
   const [interestTagId, setInterestTagId] = useState("");
   const [selectedInterestId, setSelectedInterestId] = useState("");
   const [requiresRsvp, setRequiresRsvp] = useState(false);
+  const [ticketPrice, setTicketPrice] = useState("");
+  const [maxAttendees, setMaxAttendees] = useState("");
+  const [minAge, setMinAge] = useState("");
+  const [maxAge, setMaxAge] = useState("");
   const [interests, setInterests] = useState([]);
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -68,6 +72,10 @@ export default function EventForm({ mode = "create", eventId = null }) {
       setMeetingUrl(eventData.meetingUrl || "");
       setInterestTagId(eventData.interestTagId || "");
       setRequiresRsvp(eventData.requiresRsvp || false);
+      setTicketPrice(eventData.ticketPrice ? eventData.ticketPrice.toString() : "");
+      setMaxAttendees(eventData.maxAttendees ? eventData.maxAttendees.toString() : "");
+      setMinAge(eventData.minAge ? eventData.minAge.toString() : "");
+      setMaxAge(eventData.maxAge ? eventData.maxAge.toString() : "");
 
       if (eventData.interestTag && eventData.interestTag.interestId) {
         setSelectedInterestId(eventData.interestTag.interestId);
@@ -147,6 +155,10 @@ export default function EventForm({ mode = "create", eventId = null }) {
         meetingUrl: eventType === "Online" ? meetingUrl.trim() : null,
         interestTagId,
         requiresRsvp,
+        ticketPrice: ticketPrice ? parseFloat(ticketPrice) : null,
+        maxAttendees: maxAttendees ? parseInt(maxAttendees) : null,
+        minAge: minAge ? parseInt(minAge) : null,
+        maxAge: maxAge ? parseInt(maxAge) : null,
       };
 
       if (isEditMode) {
@@ -409,6 +421,78 @@ export default function EventForm({ mode = "create", eventId = null }) {
                   If checked, users must RSVP to attend
                 </div>
               </FormGroup>
+
+              <hr className="my-4" />
+              <h5 className="mb-3">Optional Event Details</h5>
+
+              <FormGroup>
+                <Label for="ticketPrice">Ticket Price ($)</Label>
+                <Input
+                  id="ticketPrice"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={ticketPrice}
+                  onChange={(e) => setTicketPrice(e.target.value)}
+                  disabled={loading}
+                  placeholder="Leave blank for free events"
+                />
+                <div className={styles.helpText}>
+                  Enter a price if this is a paid event
+                </div>
+              </FormGroup>
+
+              <FormGroup>
+                <Label for="maxAttendees">Maximum Attendees</Label>
+                <Input
+                  id="maxAttendees"
+                  type="number"
+                  min="1"
+                  value={maxAttendees}
+                  onChange={(e) => setMaxAttendees(e.target.value)}
+                  disabled={loading}
+                  placeholder="Leave blank for unlimited"
+                />
+                <div className={styles.helpText}>
+                  Limit the number of people who can attend
+                </div>
+              </FormGroup>
+
+              <div className="row">
+                <div className="col-md-6">
+                  <FormGroup>
+                    <Label for="minAge">Minimum Age</Label>
+                    <Input
+                      id="minAge"
+                      type="number"
+                      min="0"
+                      max="120"
+                      value={minAge}
+                      onChange={(e) => setMinAge(e.target.value)}
+                      disabled={loading}
+                      placeholder="No minimum"
+                    />
+                  </FormGroup>
+                </div>
+                <div className="col-md-6">
+                  <FormGroup>
+                    <Label for="maxAge">Maximum Age</Label>
+                    <Input
+                      id="maxAge"
+                      type="number"
+                      min="0"
+                      max="120"
+                      value={maxAge}
+                      onChange={(e) => setMaxAge(e.target.value)}
+                      disabled={loading}
+                      placeholder="No maximum"
+                    />
+                  </FormGroup>
+                </div>
+              </div>
+              <div className={styles.helpText}>
+                Set age restrictions if applicable (e.g., for children's events or adult workshops)
+              </div>
 
               <div className="d-grid gap-2 mt-4">
                 <Button color="secondary" type="submit" disabled={loading}>
