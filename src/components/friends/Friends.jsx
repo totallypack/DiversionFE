@@ -123,6 +123,15 @@ export default function Friends() {
           <p className="lead mb-0">
             Connect with people who share your interests
           </p>
+          <div className="mt-3">
+            <Button
+              color="dark"
+              outline
+              onClick={() => navigate("/friend-requests")}
+            >
+              View Friend Requests
+            </Button>
+          </div>
         </div>
       </FullWidthSection>
 

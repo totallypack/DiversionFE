@@ -3,7 +3,7 @@ import { useNavigate, Link, useLocation, useParams } from "react-router-dom";
 import { getMyProfile, getUserProfile } from "../../managers/profileManager";
 import { getMyInterests } from "../../managers/userInterestManager";
 import { getMyEvents, getRsvpdEvents, getUserEvents } from "../../managers/eventManager";
-import { checkFriendship, addFriend, removeFriend } from "../../managers/friendManager";
+import { checkFriendship, addFriend, removeFriend, sendFriendRequest, getFriendRequestStatus, cancelFriendRequest, acceptFriendRequest } from "../../managers/friendManager";
 import { transformInterestsForDisplay } from "../../utils/transformUtils";
 import NavBar from "../NavBar";
 import EventCard from "../events/EventCard";
@@ -25,6 +25,8 @@ export default function ProfileView() {
   const [events, setEvents] = useState([]);
   const [rsvpdEvents, setRsvpdEvents] = useState([]);
   const [isFriend, setIsFriend] = useState(false);
+  const [requestStatus, setRequestStatus] = useState("none"); // "none", "sent", "received", "friends"
+  const [requestId, setRequestId] = useState(null);
   const [friendLoading, setFriendLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -56,14 +58,17 @@ export default function ProfileView() {
         setEvents(eventsData);
         setRsvpdEvents(rsvpdEventsData);
       } else {
-        const [otherProfile, friendStatus, otherUserEvents] = await Promise.all([
+        const [otherProfile, friendStatus, requestStatusData, otherUserEvents] = await Promise.all([
           getUserProfile(userId),
           checkFriendship(userId),
+          getFriendRequestStatus(userId),
           getUserEvents(userId),
         ]);
 
         setProfile(otherProfile);
         setIsFriend(friendStatus);
+        setRequestStatus(requestStatusData.status);
+        setRequestId(requestStatusData.requestId);
         const transformedInterests = transformInterestsForDisplay(otherProfile.interests);
         setInterests(transformedInterests);
         setEvents(otherUserEvents);
@@ -76,13 +81,44 @@ export default function ProfileView() {
     }
   };
 
-  const handleAddFriend = async () => {
+  const handleSendRequest = async () => {
     setFriendLoading(true);
     try {
-      await addFriend(userId);
-      setIsFriend(true);
+      const result = await sendFriendRequest(userId);
+      setRequestStatus("sent");
+      setRequestId(result.id);
+      setError("");
     } catch (err) {
-      setError(err.message || "Failed to add friend.");
+      setError(err.message || "Failed to send friend request.");
+    } finally {
+      setFriendLoading(false);
+    }
+  };
+
+  const handleCancelRequest = async () => {
+    setFriendLoading(true);
+    try {
+      await cancelFriendRequest(requestId);
+      setRequestStatus("none");
+      setRequestId(null);
+      setError("");
+    } catch (err) {
+      setError(err.message || "Failed to cancel request.");
+    } finally {
+      setFriendLoading(false);
+    }
+  };
+
+  const handleAcceptRequest = async () => {
+    setFriendLoading(true);
+    try {
+      await acceptFriendRequest(requestId);
+      setIsFriend(true);
+      setRequestStatus("friends");
+      setRequestId(null);
+      setError("");
+    } catch (err) {
+      setError(err.message || "Failed to accept request.");
     } finally {
       setFriendLoading(false);
     }
@@ -184,14 +220,43 @@ export default function ProfileView() {
                 >
                   {friendLoading ? "Removing..." : "Remove Friend"}
                 </Button>
+              ) : requestStatus === "sent" ? (
+                <Button
+                  color="secondary"
+                  outline
+                  size="lg"
+                  onClick={handleCancelRequest}
+                  disabled={friendLoading}
+                >
+                  {friendLoading ? "Cancelling..." : "Cancel Request"}
+                </Button>
+              ) : requestStatus === "received" ? (
+                <div className="d-flex gap-2">
+                  <Button
+                    color="dark"
+                    size="lg"
+                    onClick={handleAcceptRequest}
+                    disabled={friendLoading}
+                  >
+                    {friendLoading ? "Accepting..." : "Accept Request"}
+                  </Button>
+                  <Button
+                    color="secondary"
+                    outline
+                    size="lg"
+                    onClick={() => navigate("/friend-requests")}
+                  >
+                    View Requests
+                  </Button>
+                </div>
               ) : (
                 <Button
                   color="dark"
                   size="lg"
-                  onClick={handleAddFriend}
+                  onClick={handleSendRequest}
                   disabled={friendLoading}
                 >
-                  {friendLoading ? "Adding..." : "Add Friend"}
+                  {friendLoading ? "Sending..." : "Send Friend Request"}
                 </Button>
               )}
             </div>

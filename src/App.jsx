@@ -14,6 +14,7 @@
   import EditEvent from "./components/events/EditEvent";
   import EventDetail from "./components/events/EventDetail";
   import Friends from "./components/friends/Friends";
+  import FriendRequests from "./components/friends/FriendRequests";
 
   function App() {
     return (
@@ -31,6 +32,7 @@
           <Route path="/my-profile" element={<ProfileView />} />
           <Route path="/profile/:userId" element={<ProfileView />} />
           <Route path="/friends" element={<Friends />} />
+          <Route path="/friend-requests" element={<FriendRequests />} />
           <Route path="/events/create" element={<CreateEvent />} />
           <Route path="/events/:id/edit" element={<EditEvent />} />
           <Route path="/events/:id" element={<EventDetail />} />
