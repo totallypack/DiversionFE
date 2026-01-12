@@ -21,6 +21,11 @@ export default function ProfileSetup() {
   const [state, setState] = useState("");
   const [dob, setDob] = useState("");
   const [profilePicUrl, setProfilePicUrl] = useState("");
+  const [userType, setUserType] = useState("Regular");
+  const [businessName, setBusinessName] = useState("");
+  const [businessWebsite, setBusinessWebsite] = useState("");
+  const [businessHours, setBusinessHours] = useState("");
+  const [businessCategory, setBusinessCategory] = useState("");
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -54,6 +59,11 @@ export default function ProfileSetup() {
         setState(profile.state || "");
         setDob(profile.dob ? profile.dob.split("T")[0] : "");
         setProfilePicUrl(profile.profilePicUrl || "");
+        setUserType(profile.userType || "Regular");
+        setBusinessName(profile.businessName || "");
+        setBusinessWebsite(profile.businessWebsite || "");
+        setBusinessHours(profile.businessHours || "");
+        setBusinessCategory(profile.businessCategory || "");
       }
     } catch (error) {
       if (error.message === "Unauthorized" || error.message === "Failed to load profile") {
@@ -103,6 +113,11 @@ export default function ProfileSetup() {
         state: state || null,
         dob: dob || null,
         profilePicUrl: profilePicUrl.trim() || null,
+        userType: userType,
+        businessName: userType === "Business" ? (businessName.trim() || null) : null,
+        businessWebsite: userType === "Business" ? (businessWebsite.trim() || null) : null,
+        businessHours: userType === "Business" ? (businessHours.trim() || null) : null,
+        businessCategory: userType === "Business" ? (businessCategory.trim() || null) : null,
       };
 
       if (isEdit) {
@@ -205,6 +220,87 @@ export default function ProfileSetup() {
                     </div>
                   )}
                 </FormGroup>
+
+                <FormGroup>
+                  <Label for="userType">Account Type <span className="text-danger">*</span></Label>
+                  <Input
+                    id="userType"
+                    type="select"
+                    value={userType}
+                    onChange={(e) => setUserType(e.target.value)}
+                    disabled={loading}
+                  >
+                    <option value="Regular">Regular User</option>
+                    <option value="Business">Business Account</option>
+                    <option value="Caregiver">Caregiver Account</option>
+                  </Input>
+                  <div className="small text-muted mt-1">
+                    {userType === "Business" && "Business accounts can create paid events and workshops"}
+                    {userType === "Caregiver" && "Caregiver accounts can manage dependents and access specialized resources"}
+                    {userType === "Regular" && "Standard account for discovering and attending events"}
+                  </div>
+                </FormGroup>
+
+                {userType === "Business" && (
+                  <>
+                    <FormGroup>
+                      <Label for="businessName">Business Name</Label>
+                      <Input
+                        id="businessName"
+                        type="text"
+                        value={businessName}
+                        onChange={(e) => setBusinessName(e.target.value)}
+                        disabled={loading}
+                        placeholder="Your business name"
+                      />
+                    </FormGroup>
+
+                    <FormGroup>
+                      <Label for="businessWebsite">Business Website</Label>
+                      <Input
+                        id="businessWebsite"
+                        type="url"
+                        value={businessWebsite}
+                        onChange={(e) => setBusinessWebsite(e.target.value)}
+                        disabled={loading}
+                        placeholder="https://your-business.com"
+                      />
+                    </FormGroup>
+
+                    <FormGroup>
+                      <Label for="businessHours">Business Hours</Label>
+                      <Input
+                        id="businessHours"
+                        type="text"
+                        value={businessHours}
+                        onChange={(e) => setBusinessHours(e.target.value)}
+                        disabled={loading}
+                        placeholder="e.g., Mon-Fri 9am-5pm"
+                      />
+                    </FormGroup>
+
+                    <FormGroup>
+                      <Label for="businessCategory">Business Category</Label>
+                      <Input
+                        id="businessCategory"
+                        type="select"
+                        value={businessCategory}
+                        onChange={(e) => setBusinessCategory(e.target.value)}
+                        disabled={loading}
+                      >
+                        <option value="">Select a category...</option>
+                        <option value="Arts & Crafts">Arts & Crafts</option>
+                        <option value="Education">Education</option>
+                        <option value="Fitness & Wellness">Fitness & Wellness</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Music & Performance">Music & Performance</option>
+                        <option value="Food & Beverage">Food & Beverage</option>
+                        <option value="Professional Services">Professional Services</option>
+                        <option value="Other">Other</option>
+                      </Input>
+                    </FormGroup>
+                  </>
+                )}
 
                 <FormGroup>
                   <Label for="bio">Bio</Label>

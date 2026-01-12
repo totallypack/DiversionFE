@@ -228,7 +228,38 @@ export default function ProfileView() {
                 </div>
               )}
             </div>
-            <h2 className="mb-3">{profile?.displayName || "User"}</h2>
+            <h2 className="mb-3">
+              {profile?.displayName || "User"}
+              {profile?.userType === "Business" && profile?.isVerified && (
+                <span className="ms-2" style={{ fontSize: "1.2rem", color: "var(--color-cyan)" }} title="Verified Business">
+                  ✓
+                </span>
+              )}
+            </h2>
+            {profile?.userType && profile.userType !== "Regular" && (
+              <p className="text-muted mb-2">
+                <strong>Account Type:</strong> {profile.userType === "Business" ? "Business Account" : "Caregiver Account"}
+              </p>
+            )}
+            {profile?.userType === "Business" && profile?.businessName && (
+              <p className="text-muted mb-2">
+                <strong>Business:</strong> {profile.businessName}
+                {profile.businessCategory && ` (${profile.businessCategory})`}
+              </p>
+            )}
+            {profile?.userType === "Business" && profile?.businessWebsite && (
+              <p className="text-muted mb-2">
+                <strong>Website:</strong>{" "}
+                <a href={profile.businessWebsite} target="_blank" rel="noopener noreferrer" style={{ color: "var(--color-cyan)" }}>
+                  {profile.businessWebsite}
+                </a>
+              </p>
+            )}
+            {profile?.userType === "Business" && profile?.businessHours && (
+              <p className="text-muted mb-2">
+                <strong>Hours:</strong> {profile.businessHours}
+              </p>
+            )}
             {(profile?.city || profile?.state) && (
               <p className="text-muted mb-2">
                 <strong>Location:</strong>{" "}
