@@ -15,6 +15,10 @@
   import EventDetail from "./components/events/EventDetail";
   import Friends from "./components/friends/Friends";
   import FriendRequests from "./components/friends/FriendRequests";
+  import CommunityList from "./components/communities/CommunityList";
+  import CreateCommunity from "./components/communities/CreateCommunity";
+  import CommunityDetail from "./components/communities/CommunityDetail";
+  import MessageCenter from "./components/messages/MessageCenter";
 
   function App() {
     return (
@@ -33,6 +37,11 @@
           <Route path="/profile/:userId" element={<ProfileView />} />
           <Route path="/friends" element={<Friends />} />
           <Route path="/friend-requests" element={<FriendRequests />} />
+          <Route path="/communities" element={<CommunityList />} />
+          <Route path="/communities/create" element={<CreateCommunity />} />
+          <Route path="/communities/:id" element={<CommunityDetail />} />
+          <Route path="/messages" element={<MessageCenter />} />
+          <Route path="/messages/:userId" element={<MessageCenter />} />
           <Route path="/events/create" element={<CreateEvent />} />
           <Route path="/events/:id/edit" element={<EditEvent />} />
           <Route path="/events/:id" element={<EventDetail />} />

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getMyProfile } from "../managers/profileManager";
 import { getReceivedRequests } from "../managers/friendManager";
+import { getUnreadMessageCount } from "../managers/messageManager";
 import {
   Navbar,
   NavbarBrand,
@@ -24,15 +25,20 @@ export default function NavBar() {
   const [profile, setProfile] = useState(null);
   const [imageError, setImageError] = useState(false);
   const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
+  const [unreadMessageCount, setUnreadMessageCount] = useState(0);
 
   const toggle = () => setDropdownOpen(prevState => !prevState);
 
   useEffect(() => {
     loadProfile();
     loadPendingRequests();
+    loadUnreadMessages();
 
-    // Poll for new requests every 30 seconds
-    const interval = setInterval(loadPendingRequests, 30000);
+    // Poll for new requests and messages every 30 seconds
+    const interval = setInterval(() => {
+      loadPendingRequests();
+      loadUnreadMessages();
+    }, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -51,6 +57,15 @@ export default function NavBar() {
       setPendingRequestsCount(requests.length);
     } catch (err) {
       console.error("Failed to load pending requests:", err);
+    }
+  };
+
+  const loadUnreadMessages = async () => {
+    try {
+      const count = await getUnreadMessageCount();
+      setUnreadMessageCount(count);
+    } catch (err) {
+      console.error("Failed to load unread messages:", err);
     }
   };
 
@@ -116,6 +131,35 @@ export default function NavBar() {
                 {pendingRequestsCount}
               </Badge>
             )}
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink tag={Link} to="/messages" style={{ position: "relative" }}>
+            Messages
+            {unreadMessageCount > 0 && (
+              <Badge
+                color="danger"
+                pill
+                style={{
+                  position: "absolute",
+                  top: "8px",
+                  right: "-8px",
+                  fontSize: "0.7rem",
+                  minWidth: "18px",
+                  height: "18px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                {unreadMessageCount}
+              </Badge>
+            )}
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink tag={Link} to="/communities">
+            Communities
           </NavLink>
         </NavItem>
         <NavItem>
