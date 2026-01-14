@@ -19,6 +19,10 @@
   import CreateCommunity from "./components/communities/CreateCommunity";
   import CommunityDetail from "./components/communities/CommunityDetail";
   import MessageCenter from "./components/messages/MessageCenter";
+  import { MyRecipientsView } from "./components/caregiver/MyRecipientsView";
+  import { MyCaregiversView } from "./components/caregiver/MyCaregiversView";
+  import { CaregiverRequestInbox } from "./components/caregiver/CaregiverRequestInbox";
+  import { CaregiverRequestSent } from "./components/caregiver/CaregiverRequestSent";
 
   function App() {
     return (
@@ -45,6 +49,10 @@
           <Route path="/events/create" element={<CreateEvent />} />
           <Route path="/events/:id/edit" element={<EditEvent />} />
           <Route path="/events/:id" element={<EventDetail />} />
+          <Route path="/caregiver/recipients" element={<MyRecipientsView />} />
+          <Route path="/caregiver/my-caregivers" element={<MyCaregiversView />} />
+          <Route path="/caregiver/requests/received" element={<CaregiverRequestInbox />} />
+          <Route path="/caregiver/requests/sent" element={<CaregiverRequestSent />} />
         </Routes>
       </div>
     );

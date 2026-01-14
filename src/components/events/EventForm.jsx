@@ -8,6 +8,7 @@ import { validateEventForm } from "../../utils/eventValidation";
 import NavBar from "../NavBar";
 import ErrorAlert from "../common/ErrorAlert";
 import FullWidthSection from "../common/FullWidthSection";
+import { ActingAsSelector } from "../caregiver/ActingAsSelector";
 import {
   Form,
   FormGroup,
@@ -26,6 +27,7 @@ export default function EventForm({ mode = "create", eventId = null }) {
   const [streetAddress, setStreetAddress] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
+  const [zipCode, setZipCode] = useState("");
   const [meetingUrl, setMeetingUrl] = useState("");
   const [interestTagId, setInterestTagId] = useState("");
   const [selectedInterestId, setSelectedInterestId] = useState("");
@@ -34,6 +36,7 @@ export default function EventForm({ mode = "create", eventId = null }) {
   const [maxAttendees, setMaxAttendees] = useState("");
   const [minAge, setMinAge] = useState("");
   const [maxAge, setMaxAge] = useState("");
+  const [actingOnBehalfOf, setActingOnBehalfOf] = useState(null);
   const [interests, setInterests] = useState([]);
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -69,6 +72,7 @@ export default function EventForm({ mode = "create", eventId = null }) {
       setStreetAddress(eventData.streetAddress || "");
       setCity(eventData.city || "");
       setState(eventData.state || "");
+      setZipCode(eventData.zipCode || "");
       setMeetingUrl(eventData.meetingUrl || "");
       setInterestTagId(eventData.interestTagId || "");
       setRequiresRsvp(eventData.requiresRsvp || false);
@@ -152,6 +156,7 @@ export default function EventForm({ mode = "create", eventId = null }) {
         streetAddress: eventType === "InPerson" ? streetAddress.trim() || null : null,
         city: eventType === "InPerson" ? city.trim() : null,
         state: eventType === "InPerson" ? state : null,
+        zipCode: eventType === "InPerson" ? zipCode.trim() || null : null,
         meetingUrl: eventType === "Online" ? meetingUrl.trim() : null,
         interestTagId,
         requiresRsvp,
@@ -159,6 +164,7 @@ export default function EventForm({ mode = "create", eventId = null }) {
         maxAttendees: maxAttendees ? parseInt(maxAttendees) : null,
         minAge: minAge ? parseInt(minAge) : null,
         maxAge: maxAge ? parseInt(maxAge) : null,
+        actingOnBehalfOf: actingOnBehalfOf || null,
       };
 
       if (isEditMode) {
@@ -252,6 +258,16 @@ export default function EventForm({ mode = "create", eventId = null }) {
                   {description.length}/2000 characters
                 </div>
               </FormGroup>
+
+              {!isEditMode && (
+                <ActingAsSelector
+                  value={actingOnBehalfOf}
+                  onChange={setActingOnBehalfOf}
+                  requiredPermission="events"
+                  label="Creating event on behalf of"
+                  includeMyself={true}
+                />
+              )}
 
               <FormGroup>
                 <Label for="interest">
@@ -403,6 +419,23 @@ export default function EventForm({ mode = "create", eventId = null }) {
                         </option>
                       ))}
                     </Input>
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label for="zipCode">Zip Code</Label>
+                    <Input
+                      id="zipCode"
+                      type="text"
+                      value={zipCode}
+                      onChange={(e) => setZipCode(e.target.value)}
+                      disabled={loading}
+                      placeholder="12345"
+                      maxLength={10}
+                      pattern="[0-9]*"
+                    />
+                    <div className={styles.helpText}>
+                      Enter your 5-digit zip code (used for nearby events search)
+                    </div>
                   </FormGroup>
                 </>
               )}

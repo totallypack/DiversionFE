@@ -252,6 +252,11 @@ export default function EventDetail() {
                   {event.city && event.state
                     ? `${event.city}, ${event.state}`
                     : event.city || event.state}
+                  {event.zipCode && (
+                    <>
+                      {" "}{event.zipCode}
+                    </>
+                  )}
                 </span>
               </div>
             )}

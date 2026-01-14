@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMyFriends, searchUsers, removeFriend, addFriend } from "../../managers/friendManager";
+import { getMyFriends, searchUsers, removeFriend, sendFriendRequest } from "../../managers/friendManager";
 import NavBar from "../NavBar";
 import FullWidthSection from "../common/FullWidthSection";
+import { ActingAsSelector } from "../caregiver/ActingAsSelector";
 import {
   Input,
   Button,
@@ -16,6 +17,7 @@ export default function Friends() {
   const [friends, setFriends] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [actingOnBehalfOf, setActingOnBehalfOf] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [error, setError] = useState("");
@@ -72,15 +74,16 @@ export default function Friends() {
     }
   };
 
-  const handleAddFriend = async (userId) => {
+  const handleSendFriendRequest = async (userId) => {
     try {
-      await addFriend(userId);
-      await loadFriends();
+      await sendFriendRequest(userId, actingOnBehalfOf);
+      setError("");
+      alert("Friend request sent successfully!");
       if (searchQuery.trim().length >= 2) {
         performSearch();
       }
     } catch (err) {
-      setError("Failed to add friend");
+      setError("Failed to send friend request");
     }
   };
 
@@ -152,6 +155,13 @@ export default function Friends() {
           }}
         >
           <h3 className="mb-4">Search Users</h3>
+          <ActingAsSelector
+            value={actingOnBehalfOf}
+            onChange={setActingOnBehalfOf}
+            requiredPermission="friendships"
+            label="Sending friend requests on behalf of"
+            includeMyself={true}
+          />
           <Input
             type="text"
             placeholder="Search by username..."
@@ -192,9 +202,9 @@ export default function Friends() {
                     <Button
                       color="success"
                       size="sm"
-                      onClick={() => handleAddFriend(user.userId)}
+                      onClick={() => handleSendFriendRequest(user.userId)}
                     >
-                      Add Friend
+                      Send Friend Request
                     </Button>
                   )}
                 </ListGroupItem>

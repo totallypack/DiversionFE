@@ -15,6 +15,9 @@ export const getUserEvents = (userId) => apiGet(`${apiUrl}/user/${userId}`);
 
 export const getRsvpdEvents = () => apiGet(`${apiUrl}/rsvpd`);
 
+export const getNearbyEvents = (zipCode) =>
+  apiGet(`${apiUrl}/nearby?zipCode=${zipCode}`);
+
 export const createEvent = (eventData) => apiPost(apiUrl, eventData);
 
 export const updateEvent = (id, eventData) => apiPut(`${apiUrl}/${id}`, eventData);

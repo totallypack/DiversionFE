@@ -19,6 +19,7 @@ export default function ProfileSetup() {
   const [bio, setBio] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
+  const [zipCode, setZipCode] = useState("");
   const [dob, setDob] = useState("");
   const [profilePicUrl, setProfilePicUrl] = useState("");
   const [userType, setUserType] = useState("Regular");
@@ -26,6 +27,14 @@ export default function ProfileSetup() {
   const [businessWebsite, setBusinessWebsite] = useState("");
   const [businessHours, setBusinessHours] = useState("");
   const [businessCategory, setBusinessCategory] = useState("");
+  const [caregiverCredentials, setCaregiverCredentials] = useState("");
+  const [yearsOfExperience, setYearsOfExperience] = useState("");
+  const [certifications, setCertifications] = useState("");
+  const [careTypes, setCareTypes] = useState("");
+  const [specializations, setSpecializations] = useState("");
+  const [licenseNumber, setLicenseNumber] = useState("");
+  const [licenseExpiry, setLicenseExpiry] = useState("");
+  const [employmentStatus, setEmploymentStatus] = useState("");
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -57,6 +66,7 @@ export default function ProfileSetup() {
         setBio(profile.bio || "");
         setCity(profile.city || "");
         setState(profile.state || "");
+        setZipCode(profile.zipCode || "");
         setDob(profile.dob ? profile.dob.split("T")[0] : "");
         setProfilePicUrl(profile.profilePicUrl || "");
         setUserType(profile.userType || "Regular");
@@ -64,6 +74,14 @@ export default function ProfileSetup() {
         setBusinessWebsite(profile.businessWebsite || "");
         setBusinessHours(profile.businessHours || "");
         setBusinessCategory(profile.businessCategory || "");
+        setCaregiverCredentials(profile.caregiverCredentials || "");
+        setYearsOfExperience(profile.yearsOfExperience || "");
+        setCertifications(profile.certifications || "");
+        setCareTypes(profile.careTypes || "");
+        setSpecializations(profile.specializations || "");
+        setLicenseNumber(profile.licenseNumber || "");
+        setLicenseExpiry(profile.licenseExpiry ? profile.licenseExpiry.split("T")[0] : "");
+        setEmploymentStatus(profile.employmentStatus || "");
       }
     } catch (error) {
       if (error.message === "Unauthorized" || error.message === "Failed to load profile") {
@@ -111,6 +129,7 @@ export default function ProfileSetup() {
         bio: bio.trim() || null,
         city: city.trim() || null,
         state: state || null,
+        zipCode: zipCode.trim() || null,
         dob: dob || null,
         profilePicUrl: profilePicUrl.trim() || null,
         userType: userType,
@@ -118,6 +137,14 @@ export default function ProfileSetup() {
         businessWebsite: userType === "Business" ? (businessWebsite.trim() || null) : null,
         businessHours: userType === "Business" ? (businessHours.trim() || null) : null,
         businessCategory: userType === "Business" ? (businessCategory.trim() || null) : null,
+        caregiverCredentials: userType === "Caregiver" ? (caregiverCredentials.trim() || null) : null,
+        yearsOfExperience: userType === "Caregiver" && yearsOfExperience ? parseInt(yearsOfExperience) : null,
+        certifications: userType === "Caregiver" ? (certifications.trim() || null) : null,
+        careTypes: userType === "Caregiver" ? (careTypes.trim() || null) : null,
+        specializations: userType === "Caregiver" ? (specializations.trim() || null) : null,
+        licenseNumber: userType === "Caregiver" ? (licenseNumber.trim() || null) : null,
+        licenseExpiry: userType === "Caregiver" && licenseExpiry ? licenseExpiry : null,
+        employmentStatus: userType === "Caregiver" ? (employmentStatus.trim() || null) : null,
       };
 
       if (isEdit) {
@@ -302,6 +329,116 @@ export default function ProfileSetup() {
                   </>
                 )}
 
+                {userType === "Caregiver" && (
+                  <>
+                    <FormGroup>
+                      <Label for="caregiverCredentials">Professional Credentials</Label>
+                      <Input
+                        id="caregiverCredentials"
+                        type="textarea"
+                        rows="3"
+                        value={caregiverCredentials}
+                        onChange={(e) => setCaregiverCredentials(e.target.value)}
+                        disabled={loading}
+                        placeholder="e.g., CNA, Home Health Aide, RN"
+                        maxLength={1000}
+                      />
+                      <div className="small text-muted mt-1">
+                        List your professional credentials and certifications
+                      </div>
+                    </FormGroup>
+
+                    <FormGroup>
+                      <Label for="yearsOfExperience">Years of Experience</Label>
+                      <Input
+                        id="yearsOfExperience"
+                        type="number"
+                        min="0"
+                        value={yearsOfExperience}
+                        onChange={(e) => setYearsOfExperience(e.target.value)}
+                        disabled={loading}
+                        placeholder="Years"
+                      />
+                    </FormGroup>
+
+                    <FormGroup>
+                      <Label for="certifications">Certifications</Label>
+                      <Input
+                        id="certifications"
+                        type="text"
+                        value={certifications}
+                        onChange={(e) => setCertifications(e.target.value)}
+                        disabled={loading}
+                        placeholder="e.g., CPR, First Aid, Dementia Care"
+                        maxLength={500}
+                      />
+                    </FormGroup>
+
+                    <FormGroup>
+                      <Label for="careTypes">Types of Care Provided</Label>
+                      <Input
+                        id="careTypes"
+                        type="text"
+                        value={careTypes}
+                        onChange={(e) => setCareTypes(e.target.value)}
+                        disabled={loading}
+                        placeholder="e.g., Elderly, Disability, Post-Surgery"
+                        maxLength={500}
+                      />
+                    </FormGroup>
+
+                    <FormGroup>
+                      <Label for="specializations">Specializations</Label>
+                      <Input
+                        id="specializations"
+                        type="text"
+                        value={specializations}
+                        onChange={(e) => setSpecializations(e.target.value)}
+                        disabled={loading}
+                        placeholder="e.g., Alzheimer's, Mobility Assistance"
+                        maxLength={500}
+                      />
+                    </FormGroup>
+
+                    <FormGroup>
+                      <Label for="licenseNumber">License Number</Label>
+                      <Input
+                        id="licenseNumber"
+                        type="text"
+                        value={licenseNumber}
+                        onChange={(e) => setLicenseNumber(e.target.value)}
+                        disabled={loading}
+                        placeholder="Professional license number"
+                        maxLength={100}
+                      />
+                    </FormGroup>
+
+                    <FormGroup>
+                      <Label for="licenseExpiry">License Expiry Date</Label>
+                      <Input
+                        id="licenseExpiry"
+                        type="date"
+                        value={licenseExpiry}
+                        onChange={(e) => setLicenseExpiry(e.target.value)}
+                        disabled={loading}
+                      />
+                    </FormGroup>
+
+                    <FormGroup>
+                      <Label for="employmentStatus">Employment Status</Label>
+                      <Input
+                        id="employmentStatus"
+                        type="text"
+                        value={employmentStatus}
+                        onChange={(e) => setEmploymentStatus(e.target.value)}
+                        disabled={loading}
+                        placeholder="e.g., Self-Employed, Agency: XYZ Care"
+                        maxLength={200}
+                      />
+                    </FormGroup>
+                  </>
+                )}
+
                 <FormGroup>
                   <Label for="bio">Bio</Label>
                   <Input
@@ -347,6 +484,23 @@ export default function ProfileSetup() {
                       </option>
                     ))}
                   </Input>
+                </FormGroup>
+
+                <FormGroup>
+                  <Label for="zipCode">Zip Code</Label>
+                  <Input
+                    id="zipCode"
+                    type="text"
+                    value={zipCode}
+                    onChange={(e) => setZipCode(e.target.value)}
+                    disabled={loading}
+                    placeholder="12345"
+                    maxLength={10}
+                    pattern="[0-9]*"
+                  />
+                  <div className="small text-muted mt-1">
+                    Used to show you nearby events in your area
+                  </div>
                 </FormGroup>
 
                 <FormGroup>
