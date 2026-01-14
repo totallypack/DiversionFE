@@ -16,8 +16,8 @@ export const checkFriendship = (otherUserId) =>
   apiGet(`${apiUrl}/check/${otherUserId}`);
 
 // Friend Request functions
-export const sendFriendRequest = (receiverId) =>
-  apiPost(`${requestApiUrl}/send`, { receiverId });
+export const sendFriendRequest = (receiverId, actingOnBehalfOf = null) =>
+  apiPost(`${requestApiUrl}/send`, { receiverId, actingOnBehalfOf });
 
 export const getReceivedRequests = () =>
   apiGet(`${requestApiUrl}/received`);

@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { Button, Badge } from "reactstrap";
+import { Button, Badge, Alert } from "reactstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { getAllEvents } from "../managers/eventManager";
+import { getAllEvents, getNearbyEvents } from "../managers/eventManager";
 import { getFriendActivityFeed } from "../managers/activityManager";
+import { getMyProfile } from "../managers/profileManager";
 import { sortEventsByDate } from "../utils/transformUtils";
 import NavBar from "./NavBar";
 import ActivityFeedItem from "./ActivityFeedItem";
@@ -16,11 +17,16 @@ export default function Dashboard() {
   const [loadingEvents, setLoadingEvents] = useState(true);
   const [activities, setActivities] = useState([]);
   const [loadingActivities, setLoadingActivities] = useState(true);
+  const [nearbyEvents, setNearbyEvents] = useState([]);
+  const [loadingNearby, setLoadingNearby] = useState(false);
+  const [userZipCode, setUserZipCode] = useState(null);
+  const [zipError, setZipError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     loadEvents();
     loadActivities();
+    loadUserProfile();
   }, []);
 
   const loadEvents = async () => {
@@ -43,6 +49,36 @@ export default function Dashboard() {
     } catch (error) {
       console.error("Failed to load activities:", error);
       setLoadingActivities(false);
+    }
+  };
+
+  const loadUserProfile = async () => {
+    try {
+      const profile = await getMyProfile();
+      if (profile.zipCode) {
+        setUserZipCode(profile.zipCode);
+        setZipError(null);
+        loadNearbyEvents(profile.zipCode);
+      } else {
+        setZipError("Add a zip code to your profile to see nearby events.");
+      }
+    } catch (error) {
+      console.error("Failed to load profile:", error);
+      setZipError("Unable to load your profile.");
+    }
+  };
+
+  const loadNearbyEvents = async (zipCode) => {
+    if (!zipCode) return;
+
+    setLoadingNearby(true);
+    try {
+      const nearbyEventsData = await getNearbyEvents(zipCode);
+      setNearbyEvents(nearbyEventsData);
+      setLoadingNearby(false);
+    } catch (error) {
+      console.error("Failed to load nearby events:", error);
+      setLoadingNearby(false);
     }
   };
 
@@ -114,6 +150,92 @@ export default function Dashboard() {
             message="Add friends to see what they're up to!"
             actionText="Find Friends"
             actionLink="/friends"
+            backgroundColor="transparent"
+          />
+        )}
+      </FullWidthSection>
+
+      {/* Events Near You Section */}
+      <FullWidthSection
+        backgroundColor="var(--color-cyan)"
+        padding="80px 20px"
+        minHeight="400px"
+        containerMaxWidth="1200px"
+      >
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h2 className="mb-0">Events Near You</h2>
+        </div>
+
+        {loadingNearby ? (
+          <LoadingSpinner message="Loading nearby events..." />
+        ) : zipError ? (
+          <Alert color="info" className="text-center">
+            <strong>Zip code needed</strong>
+            <p className="mb-0 mt-2">{zipError}</p>
+            <Button
+              color="primary"
+              size="sm"
+              className="mt-2"
+              tag={Link}
+              to="/profile-setup"
+            >
+              Add Zip Code
+            </Button>
+          </Alert>
+        ) : nearbyEvents.length > 0 ? (
+          <div>
+            <p className="text-center mb-3">
+              <strong>{nearbyEvents.length} event{nearbyEvents.length !== 1 ? 's' : ''} in your area (Zip: {userZipCode})</strong>
+            </p>
+            <div className="d-flex flex-column gap-3">
+              {nearbyEvents.slice(0, 10).map((event) => (
+                <HoverCard
+                  key={event.id}
+                  onClick={() => navigate(`/events/${event.id}`)}
+                >
+                  <div className="d-flex justify-content-between align-items-start">
+                    <div className="flex-grow-1">
+                      <h4 className="mb-2">{event.title}</h4>
+                      <div className="mb-2">
+                        <Badge
+                          color="primary"
+                          className="me-2"
+                          pill
+                        >
+                          In-Person
+                        </Badge>
+                        {event.interestTagName && (
+                          <Badge color="info" pill>{event.interestTagName}</Badge>
+                        )}
+                      </div>
+                      <p className="text-muted mb-1">
+                        {event.city}, {event.state} {event.zipCode}
+                      </p>
+                      <p className="text-muted mb-0">
+                        {new Date(event.startDateTime).toLocaleDateString("en-US", {
+                          weekday: "long",
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric"
+                        })}{" "}
+                        at{" "}
+                        {new Date(event.startDateTime).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                </HoverCard>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <EmptyState
+            title="No nearby events found"
+            message="There are no upcoming events in your area. Try exploring all events or create your own!"
+            actionText="View All Events"
+            actionLink="/browse-interests"
             backgroundColor="transparent"
           />
         )}
