@@ -1,0 +1,11 @@
+.report-button {
+  border-color: #dc3545;
+  color: #dc3545;
+  transition: all 0.2s;
+}
+
+.report-button:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+}

@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { getMyProfile } from "../managers/profileManager";
 import { getReceivedRequests } from "../managers/friendManager";
 import { getUnreadMessageCount } from "../managers/messageManager";
+import NotificationBell from "./common/NotificationBell";
+import SearchBar from "./search/SearchBar";
 import {
   Navbar,
   NavbarBrand,
@@ -98,6 +100,7 @@ export default function NavBar() {
       <NavbarBrand tag={Link} to="/dashboard">
         Diversion
       </NavbarBrand>
+      <SearchBar />
       <Nav className="ms-auto" navbar>
         <NavItem>
           <NavLink tag={Link} to="/dashboard">
@@ -157,6 +160,7 @@ export default function NavBar() {
             )}
           </NavLink>
         </NavItem>
+        <NotificationBell />
         <NavItem>
           <NavLink tag={Link} to="/communities">
             Communities
@@ -218,6 +222,14 @@ export default function NavBar() {
             <DropdownItem tag={Link} to="/select-interests">
               My Interests
             </DropdownItem>
+            {profile?.isAdmin && (
+              <>
+                <DropdownItem divider />
+                <DropdownItem tag={Link} to="/admin">
+                  Admin Dashboard
+                </DropdownItem>
+              </>
+            )}
             <DropdownItem divider />
             <DropdownItem onClick={handleLogout}>
               Logout

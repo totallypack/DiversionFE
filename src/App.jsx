@@ -19,6 +19,9 @@
   import CreateCommunity from "./components/communities/CreateCommunity";
   import CommunityDetail from "./components/communities/CommunityDetail";
   import MessageCenter from "./components/messages/MessageCenter";
+  import SearchResults from "./components/search/SearchResults";
+  import AdminDashboard from "./components/admin/AdminDashboard";
+  import AdminRoute from "./components/admin/AdminRoute";
   import { MyRecipientsView } from "./components/caregiver/MyRecipientsView";
   import { MyCaregiversView } from "./components/caregiver/MyCaregiversView";
   import { CaregiverRequestInbox } from "./components/caregiver/CaregiverRequestInbox";
@@ -37,6 +40,7 @@
           <Route path="/select-subinterests/:interestId" element={<SubInterestSelection />} />
           <Route path="/browse-interests" element={<BrowseInterests />} />
           <Route path="/subinterest/:id" element={<SubInterestDetail />} />
+          <Route path="/search" element={<SearchResults />} />
           <Route path="/my-profile" element={<ProfileView />} />
           <Route path="/profile/:userId" element={<ProfileView />} />
           <Route path="/friends" element={<Friends />} />
@@ -53,6 +57,14 @@
           <Route path="/caregiver/my-caregivers" element={<MyCaregiversView />} />
           <Route path="/caregiver/requests/received" element={<CaregiverRequestInbox />} />
           <Route path="/caregiver/requests/sent" element={<CaregiverRequestSent />} />
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            }
+          />
         </Routes>
       </div>
     );

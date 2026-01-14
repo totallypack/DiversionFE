@@ -1,0 +1,7 @@
+.block-button {
+  transition: all 0.2s;
+}
+
+.block-button:hover {
+  transform: translateY(-1px);
+}
