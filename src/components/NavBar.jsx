@@ -222,6 +222,9 @@ export default function NavBar() {
             <DropdownItem tag={Link} to="/select-interests">
               My Interests
             </DropdownItem>
+            <DropdownItem tag={Link} to="/settings/blocked-users">
+              Blocked Users
+            </DropdownItem>
             {profile?.isAdmin && (
               <>
                 <DropdownItem divider />

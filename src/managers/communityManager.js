@@ -2,7 +2,8 @@ import { apiGet, apiPost, apiPut, apiDelete } from "../utils/apiClient";
 
 const apiUrl = "/api/communities";
 
-export const getPublicCommunities = () => apiGet(`${apiUrl}/public`);
+export const getPublicCommunities = (skip = 0, take = 50) =>
+  apiGet(`${apiUrl}/public?skip=${skip}&take=${take}`);
 
 export const getMyCommunities = () => apiGet(`${apiUrl}/my`);
 
