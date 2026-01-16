@@ -1,0 +1,18 @@
+.blocked-users-container {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  min-height: calc(100vh - 60px);
+}
+
+.blocked-users-container h1 {
+  margin-bottom: 0.5rem;
+}
+
+.blocked-users-container table {
+  background-color: white;
+}
+
+.blocked-users-container th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}

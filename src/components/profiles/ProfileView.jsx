@@ -8,6 +8,8 @@ import { transformInterestsForDisplay } from "../../utils/transformUtils";
 import NavBar from "../NavBar";
 import EventCard from "../events/EventCard";
 import FullWidthSection from "../common/FullWidthSection";
+import ReportButton from "../common/ReportButton";
+import BlockButton from "../common/BlockButton";
 import {
   Row,
   Col,
@@ -259,6 +261,29 @@ export default function ProfileView() {
                   {friendLoading ? "Sending..." : "Send Friend Request"}
                 </Button>
               )}
+            </div>
+          )}
+
+          {/* Report and Block Buttons for other users */}
+          {!isOwnProfile && (
+            <div style={{ position: "absolute", right: "0", top: "50%", transform: "translateY(-50%)" }}>
+              <div className="d-flex gap-2">
+                <ReportButton
+                  entityType="User"
+                  entityId={userId}
+                  entityLabel={`User: ${profile?.displayName || profile?.username}`}
+                />
+                <BlockButton
+                  userId={userId}
+                  username={profile?.displayName || profile?.username}
+                  onBlockChange={(isBlocked) => {
+                    if (isBlocked) {
+                      // Navigate away when user is blocked
+                      navigate("/dashboard");
+                    }
+                  }}
+                />
+              </div>
             </div>
           )}
 

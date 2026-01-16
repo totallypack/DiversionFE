@@ -2,12 +2,13 @@ import { apiGet, apiPost, apiPut, apiDelete } from "../utils/apiClient";
 
 const apiUrl = "/api/events";
 
-export const getAllEvents = () => apiGet(apiUrl);
+export const getAllEvents = (skip = 0, take = 50) =>
+  apiGet(`${apiUrl}?skip=${skip}&take=${take}`);
 
 export const getEventById = (id) => apiGet(`${apiUrl}/${id}`);
 
-export const getEventsByInterest = (interestTagId) =>
-  apiGet(`${apiUrl}/interest/${interestTagId}`);
+export const getEventsByInterest = (interestTagId, skip = 0, take = 50) =>
+  apiGet(`${apiUrl}/interest/${interestTagId}?skip=${skip}&take=${take}`);
 
 export const getMyEvents = () => apiGet(`${apiUrl}/my`);
 

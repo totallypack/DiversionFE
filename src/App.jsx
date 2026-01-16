@@ -20,6 +20,7 @@
   import CommunityDetail from "./components/communities/CommunityDetail";
   import MessageCenter from "./components/messages/MessageCenter";
   import SearchResults from "./components/search/SearchResults";
+  import BlockedUsers from "./components/settings/BlockedUsers";
   import AdminDashboard from "./components/admin/AdminDashboard";
   import AdminRoute from "./components/admin/AdminRoute";
   import { MyRecipientsView } from "./components/caregiver/MyRecipientsView";
@@ -41,6 +42,7 @@
           <Route path="/browse-interests" element={<BrowseInterests />} />
           <Route path="/subinterest/:id" element={<SubInterestDetail />} />
           <Route path="/search" element={<SearchResults />} />
+          <Route path="/settings/blocked-users" element={<BlockedUsers />} />
           <Route path="/my-profile" element={<ProfileView />} />
           <Route path="/profile/:userId" element={<ProfileView />} />
           <Route path="/friends" element={<Friends />} />

@@ -19,11 +19,11 @@ export const checkFriendship = (otherUserId) =>
 export const sendFriendRequest = (receiverId, actingOnBehalfOf = null) =>
   apiPost(`${requestApiUrl}/send`, { receiverId, actingOnBehalfOf });
 
-export const getReceivedRequests = () =>
-  apiGet(`${requestApiUrl}/received`);
+export const getReceivedRequests = (skip = 0, take = 50) =>
+  apiGet(`${requestApiUrl}/received?skip=${skip}&take=${take}`);
 
-export const getSentRequests = () =>
-  apiGet(`${requestApiUrl}/sent`);
+export const getSentRequests = (skip = 0, take = 50) =>
+  apiGet(`${requestApiUrl}/sent?skip=${skip}&take=${take}`);
 
 export const acceptFriendRequest = (requestId) =>
   apiPost(`${requestApiUrl}/${requestId}/accept`);
